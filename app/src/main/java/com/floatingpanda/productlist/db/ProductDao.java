@@ -42,6 +42,6 @@ public interface ProductDao {
     LiveData<List<Product>> getProductsByBarcode(long barcode);
 
     //TODO change to find results containing name, rather than perfectly matching name
-    @Query("SELECT * FROM products WHERE name LIKE name")
+    @Query("SELECT * FROM products WHERE name LIKE :name")
     LiveData<List<Product>> getProductsContainingName(String name);
 }

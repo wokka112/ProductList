@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 //TODO look into the elements in this class, e.g. ExecutorService and threads.
 //TODO create a ProductWithCategory relation.
-@Database(entities = {Category.class, Product.class}, version = 1, exportSchema = true)
+@Database(entities = {Category.class, Product.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract CategoryDao categoryDao();

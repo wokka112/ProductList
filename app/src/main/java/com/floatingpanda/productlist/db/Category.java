@@ -1,6 +1,7 @@
 package com.floatingpanda.productlist.db;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 //TODO write tests
@@ -19,6 +20,7 @@ public class Category {
         this.name = name;
     }
 
+    @Ignore
     public Category(String name) {
         this(0, name);
     }

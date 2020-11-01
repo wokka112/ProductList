@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 //TODO write tests
@@ -35,18 +36,22 @@ public class Product {
         this.categoryId = categoryId;
     }
 
+    @Ignore
     public Product(long barcode, String name, double price, long categoryId) {
         this(0, barcode, name, price, categoryId);
     }
 
+    @Ignore
     public Product(long barcode, String name, double price) {
         this(0, barcode, name, price, 0);
     }
 
+    @Ignore
     public Product(String name, double price, long categoryId) {
         this(0, 0, name, price, categoryId);
     }
 
+    @Ignore
     public Product(String name, double price) {
         this(0, 0, name, price, 0);
     }
