@@ -1,5 +1,6 @@
 package com.floatingpanda.productlist.db;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -29,4 +30,15 @@ public class Category {
     public long getId() { return id; }
     public void setName(String name) { this.name = name; }
     public String getName() { return name; }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Category category = (Category) obj;
+
+        return category.getName().equals(this.getName());
+    }
 }

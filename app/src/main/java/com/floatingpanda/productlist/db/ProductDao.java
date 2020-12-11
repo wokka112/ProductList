@@ -39,7 +39,7 @@ public interface ProductDao {
     void deleteAll();
 
     @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
-    LiveData<List<Product>> getProductsByBarcode(long barcode);
+    LiveData<List<Product>> getProductsByBarcode(String barcode);
 
     //TODO change to find results containing name, rather than perfectly matching name
     @Query("SELECT * FROM products WHERE name LIKE :name")
