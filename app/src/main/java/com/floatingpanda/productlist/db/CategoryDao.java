@@ -10,7 +10,6 @@ import androidx.room.Update;
 
 import java.util.List;
 
-//TODO write tests
 @Dao
 public interface CategoryDao {
 

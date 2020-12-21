@@ -76,7 +76,7 @@ public class CategoryDaoTest {
     }
 
     @Test
-    public void insertCategory() throws InterruptedException {
+    public void insertCategoryWhenNoneInserted() throws InterruptedException {
         List<Category> categories = LiveDataTestUtil.getValue(categoryDao.getAll());
 
         assertTrue(categories.isEmpty());
@@ -92,10 +92,98 @@ public class CategoryDaoTest {
     }
 
     @Test
-    public void insertMultipleCategories() throws InterruptedException {
+    public void insertCategoryWhenAnotherCategoryAlreadyInserted() throws InterruptedException {
+        categoryDao.insert(TestData.CATEGORY_1);
+        List<Category> categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(categories.size(), is(1));
+
+        categoryDao.insert(TestData.CATEGORY_2);
+        TimeUnit.MILLISECONDS.sleep(100);
+
+        List<Category> newCategories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(newCategories.size(), is(categories.size() + 1));
+    }
+
+    @Test
+    public void insertCategoryWhenItWasAlreadyInserted() throws InterruptedException {
         List<Category> categories = LiveDataTestUtil.getValue(categoryDao.getAll());
 
         assertTrue(categories.isEmpty());
+
+        categoryDao.insert(TestData.CATEGORY_1);
+        TimeUnit.MILLISECONDS.sleep(100);
+
+        categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(categories.size(), is(1));
+        assertThat(categories.get(0), is(TestData.CATEGORY_1));
+        assertThat(categories.get(0).getId(), is(TestData.CATEGORY_1.getId()));
+
+        categoryDao.insert(TestData.CATEGORY_1);
+        TimeUnit.MILLISECONDS.sleep(100);
+
+        categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(categories.size(), is(1));
+        assertThat(categories.get(0), is(TestData.CATEGORY_1));
+        assertThat(categories.get(0).getId(), is(TestData.CATEGORY_1.getId()));
+    }
+
+    @Test
+    public void insertMultipleCategoriesWhenNoneInserted() throws InterruptedException {
+        List<Category> categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertTrue(categories.isEmpty());
+
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        TimeUnit.MILLISECONDS.sleep(100);
+
+        categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(categories.size(), is(TestData.CATEGORIES.size()));
+
+        for (Category category : categories) {
+            assertTrue(TestData.CATEGORIES.contains(category));
+        }
+    }
+
+    @Test
+    public void insertMultipleCategoriesWhenAnotherCategoryAlreadyInserted() throws InterruptedException {
+        categoryDao.insert(TestData.CATEGORY_1);
+        List<Category> categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(categories.size(), is(1));
+
+        List<Category> categoriesToAdd = new ArrayList<>();
+        categoriesToAdd.add(TestData.CATEGORY_2);
+        categoriesToAdd.add(TestData.CATEGORY_3);
+
+        categoryDao.insertMultiple(categoriesToAdd.toArray(new Category[categoriesToAdd.size()]));
+        TimeUnit.MILLISECONDS.sleep(100);
+
+        List<Category> newCategories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(newCategories.size(), is(categories.size() + categoriesToAdd.size()));
+    }
+
+    @Test
+    public void insertMultipleCategoriesWhenTheyWereAlreadyInserted() throws InterruptedException {
+        List<Category> categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertTrue(categories.isEmpty());
+
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        TimeUnit.MILLISECONDS.sleep(100);
+
+        categories = LiveDataTestUtil.getValue(categoryDao.getAll());
+
+        assertThat(categories.size(), is(TestData.CATEGORIES.size()));
+
+        for (Category category : categories) {
+            assertTrue(TestData.CATEGORIES.contains(category));
+        }
 
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         TimeUnit.MILLISECONDS.sleep(100);

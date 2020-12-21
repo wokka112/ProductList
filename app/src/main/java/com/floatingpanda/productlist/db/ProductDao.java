@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
@@ -41,7 +42,16 @@ public interface ProductDao {
     @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
     LiveData<List<Product>> getProductsByBarcode(String barcode);
 
-    //TODO change to find results containing name, rather than perfectly matching name
+    //TODO change to find results containing name, rather than perfectly matching name, and write tests
+    // Maybe also add a ProductWithCategory version.
     @Query("SELECT * FROM products WHERE name LIKE :name")
     LiveData<List<Product>> getProductsContainingName(String name);
+
+    @Transaction
+    @Query("SELECT * FROM products ORDER BY barcode")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByBarcode();
+
+    @Transaction
+    @Query("SELECT * FROM products ORDER BY name")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByName();
 }

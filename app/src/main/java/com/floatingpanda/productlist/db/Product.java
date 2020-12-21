@@ -30,32 +30,56 @@ public class Product {
     @ForeignKey(entity = Category.class, parentColumns = "id", childColumns = "category_id", onDelete = ForeignKey.SET_DEFAULT)
     private long categoryId;
 
-    public Product(long id, String barcode, String name, float price, long categoryId) {
+    @Nullable
+    private String notes;
+
+    public Product(long id, String barcode, String name, float price, long categoryId, String notes) {
         this.id = id;
         this.barcode = barcode;
         this.name = name;
         this.price = price;
         this.categoryId = categoryId;
+        this.notes = notes;
+    }
+
+    @Ignore
+    public Product(String barcode, String name, float price, long categoryId, String notes) {
+        this(0, barcode, name, price, categoryId, notes);
     }
 
     @Ignore
     public Product(String barcode, String name, float price, long categoryId) {
-        this(0, barcode, name, price, categoryId);
+        this(0, barcode, name, price, categoryId, "None");
+    }
+
+    @Ignore
+    public Product(String barcode, String name, float price, String notes) {
+        this(0, barcode, name, price, 0, notes);
     }
 
     @Ignore
     public Product(String barcode, String name, float price) {
-        this(0, barcode, name, price, 0);
+        this(0, barcode, name, price, 0, "None");
+    }
+
+    @Ignore
+    public Product(String name, float price, long categoryId, String notes) {
+        this(0, null, name, price, categoryId, notes);
     }
 
     @Ignore
     public Product(String name, float price, long categoryId) {
-        this(0, null, name, price, categoryId);
+        this(0, null, name, price, categoryId, "None");
+    }
+
+    @Ignore
+    public Product(String name, float price, String notes) {
+        this(0, null, name, price, 0, notes);
     }
 
     @Ignore
     public Product(String name, float price) {
-        this(0, null, name, price, 0);
+        this(0, null, name, price, 0, "None");
     }
 
     public void setId(long id) { this.id = id; }
@@ -68,4 +92,21 @@ public class Product {
     public float getPrice() { return price; }
     public void setCategoryId(long categoryId) { this.categoryId = categoryId;}
     public long getCategoryId() { return categoryId; }
+    public void setNotes(String notes) { this.notes = notes; }
+    public String getNotes() { return notes; }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Product product = (Product) obj;
+
+        return (product.getBarcode().equals(this.getBarcode())
+                && product.getName().equals(this.getName())
+                && (Math.abs(product.getPrice() - this.getPrice()) < 0.001)
+                && product.getCategoryId() == this.getCategoryId()
+                && product.getNotes().equals(this.getNotes()));
+    }
 }
