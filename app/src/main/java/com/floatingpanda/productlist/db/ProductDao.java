@@ -11,12 +11,15 @@ import androidx.room.Update;
 
 import java.util.List;
 
-//TODO write tests
 @Dao
 public interface ProductDao {
 
     @Query("SELECT * FROM products")
     LiveData<List<Product>> getAll();
+
+    //TODO write test
+    @Query("SELECT * FROM products WHERE id = :id")
+    LiveData<Product> getProductById(long id);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Product product);
@@ -39,14 +42,6 @@ public interface ProductDao {
     @Query("DELETE FROM products")
     void deleteAll();
 
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
-    LiveData<List<Product>> getProductsByBarcode(String barcode);
-
-    //TODO change to find results containing name, rather than perfectly matching name, and write tests
-    // Maybe also add a ProductWithCategory version.
-    @Query("SELECT * FROM products WHERE name LIKE :name")
-    LiveData<List<Product>> getProductsContainingName(String name);
-
     @Transaction
     @Query("SELECT * FROM products ORDER BY barcode")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByBarcode();
@@ -54,4 +49,52 @@ public interface ProductDao {
     @Transaction
     @Query("SELECT * FROM products ORDER BY name")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByName();
+
+    //TODO write tests for everything below this point
+    @Transaction
+    @Query("SELECT * FROM products WHERE id LIKE :id")
+    LiveData<ProductWithCategory> getProductWithCategoryByProductId(long id);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByBarcode(String barcode);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE name LIKE '%' || :name || '%'")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingName(String name);
+
+    // Inclusive on both sides
+    // Use same price for lower and higher to get a specific price.
+    @Transaction
+    @Query("SELECT * FROM products WHERE price >= :lowerPrice AND price >= :higherPrice")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryBetweenTwoPrices(float lowerPrice, float higherPrice);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%'")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdContainingName(
+            long categoryId, String name);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND price >= :lowerPrice AND price <= :higherPrice")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndBetweenTwoPrices(
+            long categoryId, float lowerPrice, float higherPrice);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE name LIKE '%' || :name || '%' AND price >= :lowerPrice AND price <= :higherPrice")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingNameAndBetweenTwoPrices(
+            String name, float lowerPrice, float higherPrice);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%' " +
+            "AND price >= :lowerPrice AND price <= :higherPrice")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdContainingNameAndBetweenPrices(
+            long categoryId, String name, float lowerPrice, float higherPrice);
+
+    //TODO include searches involving barcodes
+
+    //TODO look into whether I can pipe searches somehow to reduce number of methods
 }
