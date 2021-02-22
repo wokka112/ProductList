@@ -1,11 +1,8 @@
 package com.floatingpanda.productlist;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LiveData;
-import androidx.room.Query;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -17,7 +14,6 @@ import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
 
-import static org.hamcrest.Matchers.both;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -27,7 +23,6 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,9 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -80,6 +73,21 @@ public class ProductDaoTest {
         List<Product> products = LiveDataTestUtil.getValue(productDao.getAll());
 
         assertThat(products.size(), is(TestData.PRODUCTS.size()));
+    }
+
+    @Test
+    public void getProductByIdWhenNoneInserted() throws InterruptedException {
+        Product product = LiveDataTestUtil.getValue(productDao.getProductById(TestData.PRODUCT_1.getId()));
+
+        assertNull(product);
+    }
+
+    @Test
+    public void getProductByIdWhenAllInserted() throws InterruptedException {
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+        Product product = LiveDataTestUtil.getValue(productDao.getProductById(TestData.PRODUCT_1.getId()));
+
+        assertThat(product, is(TestData.PRODUCT_1));
     }
 
     @Test
@@ -369,5 +377,210 @@ public class ProductDaoTest {
 
             previousName = name;
         }
+    }
+
+    @Test
+    public void getProductWithCategoryByProductId() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        ProductWithCategory productWithCategory = LiveDataTestUtil.getValue(
+                productDao.getProductWithCategoryByProductId(TestData.PRODUCT_1.getId()));
+
+        assertThat(productWithCategory.getProduct(), is(TestData.PRODUCT_1));
+        assertThat(productWithCategory.getCategory().getId(), is(TestData.PRODUCT_1.getCategoryId()));
+    }
+
+    @Test
+    public void getProductWithCategoryByProductIdWhenProductHasNoCategory() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        ProductWithCategory productWithCategory = LiveDataTestUtil.getValue(
+                productDao.getProductWithCategoryByProductId(TestData.PRODUCT_4.getId()));
+
+        assertThat(productWithCategory.getProduct(), is(TestData.PRODUCT_4));
+        assertNull(productWithCategory.getCategory());
+    }
+
+    @Test
+    public void getProductsWithCategoryByFullBarcode() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryByBarcode(TestData.PRODUCT_1.getBarcode()));
+
+        // Only 1 product with this barcode
+        int fullBarcodeListSize = 1;
+        assertThat(productsWithCategories.size(), is(fullBarcodeListSize));
+    }
+
+    @Test
+    public void getProductsWithCategoryByPartialBarcodeAtStart() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        String partialBarcode = TestData.PRODUCT_1.getBarcode().substring(0, 5);
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryByBarcode(partialBarcode));
+
+        // 2 products share this partial barcode
+        int partialBarcodeListSize = 2;
+        assertThat(productsWithCategories.size(), is(partialBarcodeListSize));
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryId() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryByCategoryId(TestData.CATEGORY_1.getId()));
+
+        // 2 products have this size
+        int listSize = 2;
+        assertThat(productsWithCategories.size(), is(listSize));
+    }
+
+    @Test
+    public void getProductsWithCategoryByFullName() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryContainingName(TestData.PRODUCT_1.getName()));
+
+        assertThat(productsWithCategories.size(), is(1));
+    }
+
+    @Test
+    public void getProductsWithCategoryByPartialNameAtStartOfName() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        String nameSubstring = TestData.PRODUCT_3.getName().substring(0, 2);
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryContainingName(nameSubstring));
+
+        assertThat(productsWithCategories.size(), is(1));
+    }
+
+    @Test
+    public void getProductsWithCategoryByPartialNameInMiddle() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        String nameSubstring = TestData.PRODUCT_3.getName().substring(2, 5);
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryContainingName(nameSubstring));
+
+        assertThat(productsWithCategories.size(), is(1));
+    }
+
+    @Test
+    public void getProductsWithCategoryByPartialNameAtEnd() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        int endIndex = TestData.PRODUCT_3.getName().length();
+        String nameSubstring = TestData.PRODUCT_3.getName().substring(endIndex - 3, endIndex - 1);
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryContainingName(nameSubstring));
+
+        assertThat(productsWithCategories.size(), is(1));
+    }
+
+    @Test
+    public void getProductsWithCategoryBetweenTwoPrices() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        float lowerPrice = TestData.PRODUCT_1.getPrice();
+        float higherPrice = TestData.PRODUCT_2.getPrice();
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryBetweenTwoPrices(lowerPrice, higherPrice));
+
+        int listSize = 2;
+        assertThat(productsWithCategories.size(), is(listSize));
+    }
+
+    // This test is to find products with a specific price, as opposed to a range of prices.
+    @Test
+    public void getProductsWithCategoryBetweenTwoPricesThatAreTheSame() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        float price = TestData.PRODUCT_4.getPrice();
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryBetweenTwoPrices(price, price));
+
+        int listSize = 1;
+        assertThat(productsWithCategories.size(), is(listSize));
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdAndContainingName() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        long categoryId = TestData.PRODUCT_1.getCategoryId();
+        String name = TestData.PRODUCT_1.getName().substring(0, 2);
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryByCategoryIdAndContainingName(categoryId, name));
+
+        int listSize = 1;
+        assertThat(productsWithCategories.size(), is(listSize));
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdAndBetweenTwoPrices() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        long categoryId = TestData.PRODUCT_1.getCategoryId();
+        float lowerPrice = TestData.PRODUCT_1.getPrice();
+        float higherPrice = TestData.PRODUCT_2.getPrice();
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryByCategoryIdAndBetweenTwoPrices(categoryId, lowerPrice, higherPrice));
+
+        int listSize = 2;
+        assertThat(productsWithCategories.size(), is(listSize));
+    }
+
+    @Test
+    public void getProductsWithCategoryContainingNameAndBetweenTwoPrices() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        String name = TestData.PRODUCT_1.getName().substring(0, 2);
+        float price = TestData.PRODUCT_1.getPrice();
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryContainingNameAndBetweenTwoPrices(name, price, price));
+
+        int listSize = 1;
+        assertThat(productsWithCategories.size(), is(listSize));
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdAndContainingNameAndBetweenPrices() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        long categoryId = TestData.PRODUCT_1.getCategoryId();
+        String name = TestData.PRODUCT_1.getName().substring(0, 2);
+        float price = TestData.PRODUCT_1.getPrice();
+
+        List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
+                productDao.getProductsWithCategoryByCategoryIdAndContainingNameAndBetweenPrices(
+                        categoryId, name, price, price));
+
+        int listSize = 1;
+        assertThat(productsWithCategories.size(), is(listSize));
     }
 }

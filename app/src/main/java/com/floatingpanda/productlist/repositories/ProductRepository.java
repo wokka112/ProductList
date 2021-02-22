@@ -24,7 +24,7 @@ public class ProductRepository {
         productDao = appDatabase.productDao();
     }
 
-    public LiveData<List<ProductWithCategory>> getAllProductsWithCategory() {
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByName() {
         return productDao.getProductsWithCategoryOrderedByName();
     }
 
@@ -32,7 +32,7 @@ public class ProductRepository {
         return productDao.getProductsWithCategoryOrderedByBarcode();
     }
 
-    public LiveData<ProductWithCategory> getProductWithCategoryWithBarcode(long productId) {
+    public LiveData<ProductWithCategory> getProductWithCategoryByProductId(long productId) {
         return productDao.getProductWithCategoryByProductId(productId);
     }
 
@@ -76,7 +76,46 @@ public class ProductRepository {
         return productDao.getProductsWithCategoryByBarcode(barcode);
     }
 
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategory(long categoryId) {
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId) {
         return productDao.getProductsWithCategoryByCategoryId(categoryId);
     }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingName(String name) {
+        return productDao.getProductsWithCategoryContainingName(name);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryBetweenTwoPrices(float lowerPrice, float higherPrice) {
+        return productDao.getProductsWithCategoryBetweenTwoPrices(lowerPrice, higherPrice);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByPrice(float price) {
+        return getProductsWithCategoryBetweenTwoPrices(price, price);
+    }
+
+    //TODO look into whether we can pipe searches in SQL and Room, or make a single SQL query that
+    // can take multiple elements.
+    // If not, add different search types like below.
+
+    /*
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%'")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingName(
+            long categoryId, String name);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND price >= :lowerPrice AND price <= :higherPrice")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndBetweenTwoPrices(
+            long categoryId, float lowerPrice, float higherPrice);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE name LIKE '%' || :name || '%' AND price >= :lowerPrice AND price <= :higherPrice")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingNameAndBetweenTwoPrices(
+            String name, float lowerPrice, float higherPrice);
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%' " +
+            "AND price >= :lowerPrice AND price <= :higherPrice")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingNameAndBetweenPrices(
+            long categoryId, String name, float lowerPrice, float higherPrice);
+     */
 }

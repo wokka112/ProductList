@@ -56,7 +56,7 @@ public interface ProductDao {
     LiveData<ProductWithCategory> getProductWithCategoryByProductId(long id);
 
     @Transaction
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
+    @Query("SELECT * FROM products WHERE barcode LIKE :barcode || '%'")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByBarcode(String barcode);
 
     @Transaction
@@ -70,12 +70,12 @@ public interface ProductDao {
     // Inclusive on both sides
     // Use same price for lower and higher to get a specific price.
     @Transaction
-    @Query("SELECT * FROM products WHERE price >= :lowerPrice AND price >= :higherPrice")
+    @Query("SELECT * FROM products WHERE price >= :lowerPrice AND price <= :higherPrice")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryBetweenTwoPrices(float lowerPrice, float higherPrice);
 
     @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%'")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdContainingName(
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingName(
             long categoryId, String name);
 
     @Transaction
@@ -91,10 +91,15 @@ public interface ProductDao {
     @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%' " +
             "AND price >= :lowerPrice AND price <= :higherPrice")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdContainingNameAndBetweenPrices(
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingNameAndBetweenPrices(
             long categoryId, String name, float lowerPrice, float higherPrice);
 
     //TODO include searches involving barcodes
 
     //TODO look into whether I can pipe searches somehow to reduce number of methods
+    @Query("SELECT * FROM products WHERE IF(:categoryId != null, category_id LIKE :categoryId, category_id LIKE *) AND " +
+            "")
+    LiveData<List<ProductWithCategory>> searchProductsWithCategories(long categoryId, String barcode,
+            String name, float lowerPrice, float higherPrice);
+    // SELECT * FROM products WHERE category_id LIKE IF) category_id LIKE :categoryId
 }
