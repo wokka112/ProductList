@@ -24,6 +24,8 @@ public class Product {
     @NonNull
     private String name;
 
+    //TODO change price to use a dedicated class - Price with an int for pounds and int for pence
+    // Then create type converter that stores prices as strings in the database, these are easily compared.
     private float price;
 
     @ColumnInfo(name = "category_id", defaultValue = "0")

@@ -6,8 +6,10 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.RawQuery;
 import androidx.room.Transaction;
 import androidx.room.Update;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import java.util.List;
 
@@ -56,7 +58,7 @@ public interface ProductDao {
     LiveData<ProductWithCategory> getProductWithCategoryByProductId(long id);
 
     @Transaction
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode || '%'")
+    @Query("SELECT * FROM products WHERE Upper(barcode) LIKE Upper(:barcode) || '%'")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByBarcode(String barcode);
 
     @Transaction
@@ -64,7 +66,7 @@ public interface ProductDao {
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId);
 
     @Transaction
-    @Query("SELECT * FROM products WHERE name LIKE '%' || :name || '%'")
+    @Query("SELECT * FROM products WHERE name LIKE '%' || Upper(:name) || '%'")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingName(String name);
 
     // Inclusive on both sides
@@ -74,7 +76,7 @@ public interface ProductDao {
     LiveData<List<ProductWithCategory>> getProductsWithCategoryBetweenTwoPrices(float lowerPrice, float higherPrice);
 
     @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%'")
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND Upper(name) LIKE '%' || Upper(:name) || '%'")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingName(
             long categoryId, String name);
 
@@ -84,7 +86,7 @@ public interface ProductDao {
             long categoryId, float lowerPrice, float higherPrice);
 
     @Transaction
-    @Query("SELECT * FROM products WHERE name LIKE '%' || :name || '%' AND price >= :lowerPrice AND price <= :higherPrice")
+    @Query("SELECT * FROM products WHERE UPPER(name) LIKE '%' || UPPER(:name) || '%' AND price >= :lowerPrice AND price <= :higherPrice")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingNameAndBetweenTwoPrices(
             String name, float lowerPrice, float higherPrice);
 
@@ -95,11 +97,9 @@ public interface ProductDao {
             long categoryId, String name, float lowerPrice, float higherPrice);
 
     //TODO include searches involving barcodes
+    @Transaction
+    @RawQuery
+    LiveData<List<ProductWithCategory>> searchProductsWithCategory(SupportSQLiteQuery query);
 
     //TODO look into whether I can pipe searches somehow to reduce number of methods
-    @Query("SELECT * FROM products WHERE IF(:categoryId != null, category_id LIKE :categoryId, category_id LIKE *) AND " +
-            "")
-    LiveData<List<ProductWithCategory>> searchProductsWithCategories(long categoryId, String barcode,
-            String name, float lowerPrice, float higherPrice);
-    // SELECT * FROM products WHERE category_id LIKE IF) category_id LIKE :categoryId
 }

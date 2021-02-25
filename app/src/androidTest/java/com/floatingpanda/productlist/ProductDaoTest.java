@@ -1,9 +1,11 @@
 package com.floatingpanda.productlist;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.room.Room;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -15,6 +17,7 @@ import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -582,5 +585,94 @@ public class ProductDaoTest {
 
         int listSize = 1;
         assertThat(productsWithCategories.size(), is(listSize));
+    }
+
+    @Test
+    public void searchProductsWithCategory() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        Product product = LiveDataTestUtil.getValue(productDao.getProductById(TestData.PRODUCT_3.getId()));
+        Log.w("ProductDaoTest", "Product got: " + product.getName());
+        assertNotNull(product);
+        TimeUnit.MILLISECONDS.sleep(100);
+
+        String barcode = "12345";
+        String name = "p";
+        long categoryId = 0;
+        float lowerPrice = 5f;
+        float higherPrice = 12f;
+
+        SimpleSQLiteQuery query = getQuery(barcode, name, categoryId, lowerPrice, higherPrice);
+        Log.w("ProductDaoTest", "Query made: " + query.getSql());
+        List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(query));
+
+        int listSize = 2;
+        assertThat(productsWithCategory.size(), is(listSize));
+
+        List<Product> products = new ArrayList<>();
+        for (ProductWithCategory productWithCategory: productsWithCategory) {
+            Log.w("ProductDaoTest", "Product: " + productWithCategory.getProduct().getName());
+            products.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(products.contains(TestData.PRODUCT_1));
+        assertTrue(products.contains(TestData.PRODUCT_3));
+    }
+
+    private SimpleSQLiteQuery getQuery(String barcode, String name, long categoryId, float lowerPrice, float higherPrice) {
+        String queryString = "SELECT * FROM products";
+
+        List<Object> args = new ArrayList<>();
+
+        boolean whereStarted = false;
+
+        if (barcode != null && !barcode.trim().isEmpty()) {
+            queryString += " WHERE barcode LIKE ? || '%'";
+            args.add(barcode);
+            whereStarted = true;
+        }
+
+        if (name != null && !name.trim().isEmpty()) {
+            if (!whereStarted) {
+                queryString += " WHERE";
+                whereStarted = true;
+            } else {
+                queryString += " AND";
+            }
+
+            queryString += " Upper(name) LIKE '%' || Upper(?) || '%'";
+            args.add(name);
+        }
+
+        if (categoryId > 0) {
+            if (!whereStarted) {
+                queryString += " WHERE";
+                whereStarted = true;
+            } else {
+                queryString += " AND";
+            }
+
+            queryString += " category_id LIKE ?";
+            args.add(categoryId);
+        }
+
+        //TODO fix floats in table, they're causing really bad comparison issues
+        if (lowerPrice >= 0f && higherPrice >= lowerPrice) {
+            if (!whereStarted) {
+                queryString += " WHERE";
+                whereStarted = true;
+            } else {
+                queryString += " AND";
+            }
+
+            queryString += " price >= ?";
+            args.add(lowerPrice);
+            queryString += " AND price <= ?";
+            args.add(higherPrice);
+        }
+
+        Log.w("ProductDaoTest", "Query: " + queryString);
+        return new SimpleSQLiteQuery(queryString, args.toArray());
     }
 }

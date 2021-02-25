@@ -3,12 +3,14 @@ package com.floatingpanda.productlist.repositories;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductRepository {
@@ -95,6 +97,61 @@ public class ProductRepository {
     //TODO look into whether we can pipe searches in SQL and Room, or make a single SQL query that
     // can take multiple elements.
     // If not, add different search types like below.
+    public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
+            long categoryId, float lowerPrice, float higherPrice) {
+        String queryString = "SELECT * FROM products";
+
+        List<Object> args = new ArrayList<>();
+
+        boolean whereStarted = false;
+
+        if (barcode != null && !barcode.trim().isEmpty()) {
+            queryString += " WHERE barcode LIKE ? || '%'";
+            args.add(barcode);
+            whereStarted = true;
+        }
+
+        if (name != null && !name.trim().isEmpty()) {
+            if (!whereStarted) {
+                queryString += " WHERE";
+                whereStarted = true;
+            } else {
+                queryString += " AND";
+            }
+
+            queryString += " Upper(name) LIKE '%' || Upper(?) || '%'";
+            args.add(name);
+        }
+
+        if (categoryId > 0) {
+            if (!whereStarted) {
+                queryString += " WHERE";
+                whereStarted = true;
+            } else {
+                queryString += " AND";
+            }
+
+            queryString += " category_id LIKE ?";
+            args.add(categoryId);
+        }
+
+        //TODO fix floats in table, they're causing really bad comparison issues
+        if (lowerPrice >= 0f && higherPrice >= lowerPrice) {
+            if (!whereStarted) {
+                queryString += " WHERE";
+                whereStarted = true;
+            } else {
+                queryString += " AND";
+            }
+
+            queryString += " price >= ?";
+            args.add(lowerPrice);
+            queryString += " AND price <= ?";
+            args.add(higherPrice);
+        }
+        SimpleSQLiteQuery query = new SimpleSQLiteQuery(queryString, args.toArray());
+        return productDao.searchProductsWithCategory(query);
+    }
 
     /*
     @Transaction
