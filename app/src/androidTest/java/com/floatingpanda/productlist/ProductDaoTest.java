@@ -198,7 +198,7 @@ public class ProductDaoTest {
 
         String newBarcode = "41244123132";
         String newName = "Newwwwww Nameeeee";
-        float newPrice = 6.79f;
+        Price newPrice = new Price(6, 79);
         long newCategoryId = 5;
         String newNotes = "New Notes";
 
@@ -234,7 +234,7 @@ public class ProductDaoTest {
 
         String newName1 = "New Name 1";
         String newBarcode1 = "4012441845415";
-        float newPrice1 = 6.41f;
+        Price newPrice1 = new Price(6, 41);
         long newCategoryId1 = 8;
         String newNotes1 = "New Notes 1";
 
@@ -242,7 +242,7 @@ public class ProductDaoTest {
 
         String newName2 = "New Name 2";
         String newBarcode2 = "5145481442104";
-        float newPrice2 = 1.46f;
+        Price newPrice2 = new Price(1, 46);
         long newCategoryId2 = 10;
         String newNotes2 = "New Notes 2";
 
@@ -407,18 +407,24 @@ public class ProductDaoTest {
     }
 
     @Test
-    public void getProductsWithCategoryByFullBarcode() throws InterruptedException {
+    public void getProductsWithCategoryByExactBarcode() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
-                productDao.getProductsWithCategoryByBarcode(TestData.PRODUCT_1.getBarcode()));
+                productDao.getProductsWithCategoryByExactBarcode(TestData.PRODUCT_1.getBarcode()));
 
         // Only 1 product with this barcode
         int fullBarcodeListSize = 1;
         assertThat(productsWithCategories.size(), is(fullBarcodeListSize));
     }
 
+    //TODO update all these tests to use the general purpose search function. These searches are
+    // obsolete and will be removed.
+
+    // TESTS OF GENERAL PURPOSE SEARCH FUNCTION //
+
+    /*
     @Test
     public void getProductsWithCategoryByPartialBarcodeAtStart() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -586,6 +592,7 @@ public class ProductDaoTest {
         int listSize = 1;
         assertThat(productsWithCategories.size(), is(listSize));
     }
+    */
 
     @Test
     public void searchProductsWithCategory() throws InterruptedException {
@@ -593,28 +600,26 @@ public class ProductDaoTest {
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
         Product product = LiveDataTestUtil.getValue(productDao.getProductById(TestData.PRODUCT_3.getId()));
-        Log.w("ProductDaoTest", "Product got: " + product.getName());
         assertNotNull(product);
-        TimeUnit.MILLISECONDS.sleep(100);
 
         String barcode = "12345";
         String name = "p";
         long categoryId = 0;
-        float lowerPrice = 5f;
-        float higherPrice = 12f;
+        float lowerPrice = 5.49f;
+        float higherPrice = 20.27f;
 
         SimpleSQLiteQuery query = getQuery(barcode, name, categoryId, lowerPrice, higherPrice);
         Log.w("ProductDaoTest", "Query made: " + query.getSql());
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(query));
-
-        int listSize = 2;
-        assertThat(productsWithCategory.size(), is(listSize));
 
         List<Product> products = new ArrayList<>();
         for (ProductWithCategory productWithCategory: productsWithCategory) {
             Log.w("ProductDaoTest", "Product: " + productWithCategory.getProduct().getName());
             products.add(productWithCategory.getProduct());
         }
+
+        int listSize = 2;
+        assertThat(productsWithCategory.size(), is(listSize));
 
         assertTrue(products.contains(TestData.PRODUCT_1));
         assertTrue(products.contains(TestData.PRODUCT_3));
@@ -625,6 +630,7 @@ public class ProductDaoTest {
 
         List<Object> args = new ArrayList<>();
 
+        // Tracks whether already using a WHERE clause in the query
         boolean whereStarted = false;
 
         if (barcode != null && !barcode.trim().isEmpty()) {
@@ -657,7 +663,6 @@ public class ProductDaoTest {
             args.add(categoryId);
         }
 
-        //TODO fix floats in table, they're causing really bad comparison issues
         if (lowerPrice >= 0f && higherPrice >= lowerPrice) {
             if (!whereStarted) {
                 queryString += " WHERE";
@@ -667,12 +672,20 @@ public class ProductDaoTest {
             }
 
             queryString += " price >= ?";
-            args.add(lowerPrice);
+
+            int lowerPriceInt = Math.round(lowerPrice * 100);
+            args.add(lowerPriceInt);
+
+            Log.w("test", "lowerPriceInt = " + lowerPriceInt);
+
             queryString += " AND price <= ?";
-            args.add(higherPrice);
+
+            int higherPriceInt = Math.round(higherPrice * 100);
+            args.add(higherPriceInt);
+
+            Log.w("test", "higherPriceInt = " + higherPriceInt);
         }
 
-        Log.w("ProductDaoTest", "Query: " + queryString);
         return new SimpleSQLiteQuery(queryString, args.toArray());
     }
 }

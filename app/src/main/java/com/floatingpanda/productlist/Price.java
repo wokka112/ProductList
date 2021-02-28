@@ -2,6 +2,7 @@ package com.floatingpanda.productlist;
 
 import androidx.annotation.Nullable;
 
+// Models the British monetary system of pounds and pence.
 public class Price implements Comparable<Price> {
     private int pounds;
     private int pence;

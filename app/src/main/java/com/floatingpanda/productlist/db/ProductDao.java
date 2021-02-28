@@ -62,6 +62,11 @@ public interface ProductDao {
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByBarcode(String barcode);
 
     @Transaction
+    @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode);
+
+    //TODO remove all searches below except the general purpose dynamic search
+    @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId);
 
@@ -96,10 +101,7 @@ public interface ProductDao {
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingNameAndBetweenPrices(
             long categoryId, String name, float lowerPrice, float higherPrice);
 
-    //TODO include searches involving barcodes
     @Transaction
     @RawQuery
     LiveData<List<ProductWithCategory>> searchProductsWithCategory(SupportSQLiteQuery query);
-
-    //TODO look into whether I can pipe searches somehow to reduce number of methods
 }

@@ -1,10 +1,12 @@
 package com.floatingpanda.productlist.repositories;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
+import com.floatingpanda.productlist.Price;
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
@@ -94,15 +96,31 @@ public class ProductRepository {
         return getProductsWithCategoryBetweenTwoPrices(price, price);
     }
 
-    //TODO look into whether we can pipe searches in SQL and Room, or make a single SQL query that
-    // can take multiple elements.
-    // If not, add different search types like below.
     public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
             long categoryId, float lowerPrice, float higherPrice) {
+        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice);
+        return productDao.searchProductsWithCategory(query);
+    }
+
+    public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
+            long categoryId, int lowerPrice, int higherPrice) {
+        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice);
+        return productDao.searchProductsWithCategory(query);
+    }
+
+    public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
+            long categoryId, Price lowerPrice, Price higherPrice) {
+        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice);
+        return productDao.searchProductsWithCategory(query);
+    }
+
+    private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
+                                             int lowerPrice, int higherPrice) {
         String queryString = "SELECT * FROM products";
 
         List<Object> args = new ArrayList<>();
 
+        // Tracks whether already using a WHERE clause in the query
         boolean whereStarted = false;
 
         if (barcode != null && !barcode.trim().isEmpty()) {
@@ -135,7 +153,6 @@ public class ProductRepository {
             args.add(categoryId);
         }
 
-        //TODO fix floats in table, they're causing really bad comparison issues
         if (lowerPrice >= 0f && higherPrice >= lowerPrice) {
             if (!whereStarted) {
                 queryString += " WHERE";
@@ -145,12 +162,33 @@ public class ProductRepository {
             }
 
             queryString += " price >= ?";
-            args.add(lowerPrice);
+
+            int lowerPriceInt = Math.round(lowerPrice * 100);
+            args.add(lowerPriceInt);
+
             queryString += " AND price <= ?";
-            args.add(higherPrice);
+
+            int higherPriceInt = Math.round(higherPrice * 100);
+            args.add(higherPriceInt);
         }
-        SimpleSQLiteQuery query = new SimpleSQLiteQuery(queryString, args.toArray());
-        return productDao.searchProductsWithCategory(query);
+
+        return new SimpleSQLiteQuery(queryString, args.toArray());
+    }
+
+    private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
+            float lowerPrice, float higherPrice) {
+        int lowerPriceInt = Math.round(lowerPrice * 100);
+        int higherPriceInt = Math.round(higherPrice * 100);
+
+        return createSQLQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt);
+    }
+
+    private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
+            Price lowerPrice, Price higherPrice) {
+        int lowerPriceInt = (lowerPrice.getPounds() * 100) + lowerPrice.getPence();
+        int higherPriceInt = (higherPrice.getPounds() * 100) + higherPrice.getPence();
+
+        return createSQLQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt);
     }
 
     /*

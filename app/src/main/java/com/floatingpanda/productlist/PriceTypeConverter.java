@@ -2,31 +2,19 @@ package com.floatingpanda.productlist;
 
 import androidx.room.TypeConverter;
 
-//TODO write tests
+// Price is stored in the DB as an integer which is 100 times larger than the price in pounds.
+// So £9.99 should be stored as 999.
 public class PriceTypeConverter {
     @TypeConverter
-    public static Price fromPriceString(String priceString) {
-        String[] strings = priceString.split(".");
-
-        //First string is pounds
-        int pounds = Integer.parseInt(strings[0]);
-
-        //Second string is pence
-        int pence = Integer.parseInt(strings[1]);
+    public static Price fromPriceInt(int priceInt) {
+        int pounds = priceInt / 100;
+        int pence = priceInt % 100;
 
         return new Price(pounds, pence);
     }
 
     @TypeConverter
-    public static String toPriceString(Price price) {
-        String priceString = Integer.toString(price.getPounds()) + ".";
-
-        if (price.getPence() < 10) {
-            priceString += "0";
-        }
-
-        priceString += Integer.toString(price.getPence());
-
-        return priceString;
+    public static int toPriceInt(Price price) {
+        return (price.getPounds() * 100) + price.getPence();
     }
 }

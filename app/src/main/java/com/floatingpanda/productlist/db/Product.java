@@ -8,6 +8,8 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.floatingpanda.productlist.Price;
+
 //TODO write tests
 /**
  * Represents a product in the store. A product may be without a barcode. A product may also have no
@@ -24,9 +26,11 @@ public class Product {
     @NonNull
     private String name;
 
-    //TODO change price to use a dedicated class - Price with an int for pounds and int for pence
-    // Then create type converter that stores prices as strings in the database, these are easily compared.
-    private float price;
+    // Describes a price in terms of British pounds and pence.
+    // Price is stored in the DB as an integer which is 100 times larger than the price in pounds.
+    // So £9.99 should be stored as 999.
+    @NonNull
+    private Price price;
 
     @ColumnInfo(name = "category_id", defaultValue = "0")
     @ForeignKey(entity = Category.class, parentColumns = "id", childColumns = "category_id", onDelete = ForeignKey.SET_DEFAULT)
@@ -35,7 +39,7 @@ public class Product {
     @Nullable
     private String notes;
 
-    public Product(long id, String barcode, String name, float price, long categoryId, String notes) {
+    public Product(long id, String barcode, String name, Price price, long categoryId, String notes) {
         this.id = id;
         this.barcode = barcode;
         this.name = name;
@@ -44,43 +48,44 @@ public class Product {
         this.notes = notes;
     }
 
+    //TODO go over these creation methods and remove unnecessary ones
     @Ignore
-    public Product(String barcode, String name, float price, long categoryId, String notes) {
+    public Product(String barcode, String name, Price price, long categoryId, String notes) {
         this(0, barcode, name, price, categoryId, notes);
     }
 
     @Ignore
-    public Product(String barcode, String name, float price, long categoryId) {
+    public Product(String barcode, String name, Price price, long categoryId) {
         this(0, barcode, name, price, categoryId, "None");
     }
 
     @Ignore
-    public Product(String barcode, String name, float price, String notes) {
+    public Product(String barcode, String name, Price price, String notes) {
         this(0, barcode, name, price, 0, notes);
     }
 
     @Ignore
-    public Product(String barcode, String name, float price) {
+    public Product(String barcode, String name, Price price) {
         this(0, barcode, name, price, 0, "None");
     }
 
     @Ignore
-    public Product(String name, float price, long categoryId, String notes) {
+    public Product(String name, Price price, long categoryId, String notes) {
         this(0, null, name, price, categoryId, notes);
     }
 
     @Ignore
-    public Product(String name, float price, long categoryId) {
+    public Product(String name, Price price, long categoryId) {
         this(0, null, name, price, categoryId, "None");
     }
 
     @Ignore
-    public Product(String name, float price, String notes) {
+    public Product(String name, Price price, String notes) {
         this(0, null, name, price, 0, notes);
     }
 
     @Ignore
-    public Product(String name, float price) {
+    public Product(String name, Price price) {
         this(0, null, name, price, 0, "None");
     }
 
@@ -90,8 +95,8 @@ public class Product {
     public String getBarcode() { return barcode; }
     public void setName(String name) { this.name = name; }
     public String getName() { return name; }
-    public void setPrice(float price) { this.price = price; }
-    public float getPrice() { return price; }
+    public void setPrice(Price price) { this.price = price; }
+    public Price getPrice() { return price; }
     public void setCategoryId(long categoryId) { this.categoryId = categoryId;}
     public long getCategoryId() { return categoryId; }
     public void setNotes(String notes) { this.notes = notes; }
@@ -107,7 +112,7 @@ public class Product {
 
         return (product.getBarcode().equals(this.getBarcode())
                 && product.getName().equals(this.getName())
-                && (Math.abs(product.getPrice() - this.getPrice()) < 0.001)
+                && product.getPrice().equals(this.getPrice())
                 && product.getCategoryId() == this.getCategoryId()
                 && product.getNotes().equals(this.getNotes()));
     }
