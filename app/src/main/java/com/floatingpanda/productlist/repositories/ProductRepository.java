@@ -1,12 +1,11 @@
 package com.floatingpanda.productlist.repositories;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
-import com.floatingpanda.productlist.Price;
+import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
@@ -76,27 +75,13 @@ public class ProductRepository {
         });
     }
 
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByBarcode(String barcode) {
-        return productDao.getProductsWithCategoryByBarcode(barcode);
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode) {
+        return productDao.getProductsWithCategoryByExactBarcode(barcode);
     }
 
     public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId) {
         return productDao.getProductsWithCategoryByCategoryId(categoryId);
     }
-
-    // TODO remove start
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingName(String name) {
-        return productDao.getProductsWithCategoryContainingName(name);
-    }
-
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryBetweenTwoPrices(float lowerPrice, float higherPrice) {
-        return productDao.getProductsWithCategoryBetweenTwoPrices(lowerPrice, higherPrice);
-    }
-
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByPrice(float price) {
-        return getProductsWithCategoryBetweenTwoPrices(price, price);
-    }
-    //TODO remove finish
 
     public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
             long categoryId, float lowerPrice, float higherPrice) {

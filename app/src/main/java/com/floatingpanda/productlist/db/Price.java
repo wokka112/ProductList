@@ -1,4 +1,4 @@
-package com.floatingpanda.productlist;
+package com.floatingpanda.productlist.db;
 
 import androidx.annotation.Nullable;
 

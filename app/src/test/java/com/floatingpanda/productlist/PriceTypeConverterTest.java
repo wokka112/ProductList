@@ -1,6 +1,7 @@
 package com.floatingpanda.productlist;
 
-import android.util.Log;
+import com.floatingpanda.productlist.db.Price;
+import com.floatingpanda.productlist.db.PriceTypeConverter;
 
 import org.junit.Test;
 

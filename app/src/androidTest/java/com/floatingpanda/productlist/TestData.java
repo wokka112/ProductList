@@ -1,6 +1,7 @@
 package com.floatingpanda.productlist;
 
 import com.floatingpanda.productlist.db.Category;
+import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 
 import java.util.Arrays;

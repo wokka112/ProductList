@@ -1,7 +1,6 @@
 package com.floatingpanda.productlist;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
@@ -13,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Category;
 import com.floatingpanda.productlist.db.CategoryDao;
+import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
@@ -420,9 +420,6 @@ public class ProductDaoTest {
         assertThat(productsWithCategories.size(), is(fullBarcodeListSize));
     }
 
-    //TODO update all these tests to use the general purpose search function. These searches are
-    // obsolete and will be removed.
-
     // TESTS OF GENERAL PURPOSE SEARCH FUNCTION //
 
     // Search with partial name
@@ -758,8 +755,7 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_1));
     }
 
-    //TODO write tests combining test cases from above
-
+    //TODO write search tests combining test cases from above
     //name and barcode
     //name and category id
     //name and lower price
@@ -785,7 +781,7 @@ public class ProductDaoTest {
     //name and barcode and category id and lower price and higher price
 
     @Test
-    public void searchProductsWithCategory() throws InterruptedException {
+    public void searchProductsWithCategoryByPotentialRealisticSearch() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 

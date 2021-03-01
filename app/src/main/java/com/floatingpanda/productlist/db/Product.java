@@ -8,9 +8,6 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.floatingpanda.productlist.Price;
-
-//TODO write tests
 /**
  * Represents a product in the store. A product may be without a barcode. A product may also have no
  * category it belongs to.

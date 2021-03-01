@@ -5,7 +5,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-//TODO write tests
 /**
  * Represents a category of product in the store.
  */
