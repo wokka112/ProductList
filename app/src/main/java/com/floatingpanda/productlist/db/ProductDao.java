@@ -52,24 +52,24 @@ public interface ProductDao {
     @Query("SELECT * FROM products ORDER BY name")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByName();
 
-    //TODO write tests for everything below this point
     @Transaction
     @Query("SELECT * FROM products WHERE id LIKE :id")
     LiveData<ProductWithCategory> getProductWithCategoryByProductId(long id);
 
+    //TODO remove
     @Transaction
-    @Query("SELECT * FROM products WHERE Upper(barcode) LIKE Upper(:barcode) || '%'")
+    @Query("SELECT * FROM products WHERE Upper(barcode) LIKE '%' || Upper(:barcode) || '%'")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByBarcode(String barcode);
 
     @Transaction
     @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode);
 
-    //TODO remove all searches below except the general purpose dynamic search
     @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId);
 
+    //TODO remove start
     @Transaction
     @Query("SELECT * FROM products WHERE name LIKE '%' || Upper(:name) || '%'")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingName(String name);
@@ -100,6 +100,7 @@ public interface ProductDao {
             "AND price >= :lowerPrice AND price <= :higherPrice")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingNameAndBetweenPrices(
             long categoryId, String name, float lowerPrice, float higherPrice);
+    //TODO remove finish
 
     @Transaction
     @RawQuery

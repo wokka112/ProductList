@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 //TODO look into removing the hack-y TimeUnit.MILLISECONDS.sleep() functions.
 // Need to find a way to wait until the database is updated before testing again. Maybe use observers?
+// Could use LiveDataTestUtil.waitforUpdate() method.
 
 @RunWith(AndroidJUnit4.class)
 public class CategoryRepositoryTest {

@@ -84,6 +84,7 @@ public class ProductRepository {
         return productDao.getProductsWithCategoryByCategoryId(categoryId);
     }
 
+    // TODO remove start
     public LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingName(String name) {
         return productDao.getProductsWithCategoryContainingName(name);
     }
@@ -95,6 +96,7 @@ public class ProductRepository {
     public LiveData<List<ProductWithCategory>> getProductsWithCategoryByPrice(float price) {
         return getProductsWithCategoryBetweenTwoPrices(price, price);
     }
+    //TODO remove finish
 
     public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
             long categoryId, float lowerPrice, float higherPrice) {
@@ -114,6 +116,31 @@ public class ProductRepository {
         return productDao.searchProductsWithCategory(query);
     }
 
+    /**
+     * Searches the database and returns a list of products with categories, filtered by name,
+     * barcode, category id and price, or any combination of these. Partial names and partial
+     * barcodes can be used.
+     *
+     * If barcode is set to null, products won't be filtered by barcodes.
+     * If name is set to null, products won't be filtered by names.
+     * If categoryId is set to 0, products won't be filtered by categories.
+     * If lowerPrice is set to 0 then products will not be filtered with a lower
+     * price.
+     * If higherPrice is set to 0 then products will not be filtered with
+     * a higher price.
+     *
+     * categoryId must be non-negative.
+     * lowerPrice and higherPrice must be non-negative.
+     * If lowerPrice is greater than 0, then higherPrice must be either greater than or equal to
+     * lowerPrice or set to 0.
+     *
+     * @param barcode
+     * @param name
+     * @param categoryId
+     * @param lowerPrice
+     * @param higherPrice
+     * @return
+     */
     private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
                                              int lowerPrice, int higherPrice) {
         String queryString = "SELECT * FROM products";
@@ -124,7 +151,7 @@ public class ProductRepository {
         boolean whereStarted = false;
 
         if (barcode != null && !barcode.trim().isEmpty()) {
-            queryString += " WHERE barcode LIKE ? || '%'";
+            queryString += " WHERE barcode LIKE '%' || ? || '%'";
             args.add(barcode);
             whereStarted = true;
         }
@@ -153,7 +180,7 @@ public class ProductRepository {
             args.add(categoryId);
         }
 
-        if (lowerPrice >= 0f && higherPrice >= lowerPrice) {
+        if (lowerPrice > 0f) {
             if (!whereStarted) {
                 queryString += " WHERE";
                 whereStarted = true;
@@ -163,10 +190,22 @@ public class ProductRepository {
 
             queryString += " price >= ?";
 
+            // Prices are stored in the database as integers with a value 100 times the original price
+            // (e.g. £9.99 = 999). We convert the prices to integers that we can then compare with the
+            // db stored prices.
             int lowerPriceInt = Math.round(lowerPrice * 100);
             args.add(lowerPriceInt);
+        }
 
-            queryString += " AND price <= ?";
+        if (higherPrice > 0f) {
+            if (!whereStarted) {
+                queryString += " WHERE";
+                whereStarted = true;
+            } else {
+                queryString += " AND";
+            }
+
+            queryString += " price <= ?";
 
             int higherPriceInt = Math.round(higherPrice * 100);
             args.add(higherPriceInt);
@@ -177,6 +216,9 @@ public class ProductRepository {
 
     private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
             float lowerPrice, float higherPrice) {
+        // Prices are stored in the database as integers with a value 100 times the original price
+        // (e.g. £9.99 = 999). We convert the prices to integers that we can then compare with the
+        // db stored prices.
         int lowerPriceInt = Math.round(lowerPrice * 100);
         int higherPriceInt = Math.round(higherPrice * 100);
 
@@ -185,32 +227,12 @@ public class ProductRepository {
 
     private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
             Price lowerPrice, Price higherPrice) {
+        // Prices are stored in the database as integers with a value 100 times the original price
+        // (e.g. £9.99 = 999). We convert the prices to integers that we can then compare with the
+        // db stored prices.
         int lowerPriceInt = (lowerPrice.getPounds() * 100) + lowerPrice.getPence();
         int higherPriceInt = (higherPrice.getPounds() * 100) + higherPrice.getPence();
 
         return createSQLQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt);
     }
-
-    /*
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%'")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingName(
-            long categoryId, String name);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND price >= :lowerPrice AND price <= :higherPrice")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndBetweenTwoPrices(
-            long categoryId, float lowerPrice, float higherPrice);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE name LIKE '%' || :name || '%' AND price >= :lowerPrice AND price <= :higherPrice")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryContainingNameAndBetweenTwoPrices(
-            String name, float lowerPrice, float higherPrice);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId AND name LIKE '%' || :name || '%' " +
-            "AND price >= :lowerPrice AND price <= :higherPrice")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdAndContainingNameAndBetweenPrices(
-            long categoryId, String name, float lowerPrice, float higherPrice);
-     */
 }

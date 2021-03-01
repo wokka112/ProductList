@@ -24,7 +24,7 @@ public class TestData {
     public static final Product PRODUCT_1 = new Product(4, "1234567890123", "Taps", PRODUCT_1_PRICE, 1, "None");
     public static final Product PRODUCT_2 = new Product(5, "3210987654321", "Sink", PRODUCT_2_PRICE, 1, "Notesssss");
     public static final Product PRODUCT_3 = new Product(6, "1234509876109", "Pillows", PRODUCT_3_PRICE, 2, "Flippledee");
-    public static final Product PRODUCT_4 = new Product(7, "0987612345875", "Sweets", PRODUCT_4_PRICE, 0, "Floopledoo");
+    public static final Product PRODUCT_4 = new Product(7, "0897621453857", "Sweets", PRODUCT_4_PRICE, 0, "Floopledoo");
 
     public static final List<Product> PRODUCTS = Arrays.asList(PRODUCT_1, PRODUCT_2, PRODUCT_3, PRODUCT_4);
 }
