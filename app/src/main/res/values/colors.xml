@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <!-- TODO go over colors for app and redo them -->
+    <color name="colorPrimary">@color/colorAero</color>
+    <color name="colorPrimaryDark">@color/colorAeroDark</color>
+    <color name="colorAccent">#BCDE87</color>
+
+    <color name="colorAero">#87BCDE</color>
+    <color name="colorAeroDark">#5E839B</color>
+    <color name="colorAlternativeAero">#87D2DE</color>
+    <color name="colorAlternativeAeroDark">#87C4DE</color>
+    <color name="colorDeepSpaceSparkle">#385F71</color>
+    <color name="colorDarkKhaki">#B5BA72</color>
+    <color name="colorRussianViolet">#420039</color>
+    <color name="colorAmaranthRed">#D72638</color>
+
+    <color name="colorNavDrawerDarkBlue">#4FACFE</color>
+    <color name="colorNavDrawerLightBlue">#00F2FE</color>
+    <color name="colorNavDrawerAltDarkBlue">#330867</color>
+    <color name="colorNavDrawerAltLightBlue">#30CFD0</color>
 </resources>
