@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- TODO go over colors for app and redo them -->
-    <color name="colorPrimary">@color/colorAero</color>
-    <color name="colorPrimaryDark">@color/colorAeroDark</color>
-    <color name="colorAccent">#BCDE87</color>
+    <color name="colorPrimary">@color/colorLighterDeepSpaceSparkle</color>
+    <color name="colorPrimaryDark">@color/colorDeepSpaceSparkle</color>
+    <color name="colorAccent">#53998D</color>
 
     <color name="colorAero">#87BCDE</color>
     <color name="colorAeroDark">#5E839B</color>
     <color name="colorAlternativeAero">#87D2DE</color>
     <color name="colorAlternativeAeroDark">#87C4DE</color>
+    <color name="colorLighterDeepSpaceSparkle">#538299</color>
     <color name="colorDeepSpaceSparkle">#385F71</color>
     <color name="colorDarkKhaki">#B5BA72</color>
     <color name="colorRussianViolet">#420039</color>

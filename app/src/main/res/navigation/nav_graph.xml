@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_products">
+
+    <fragment
+        android:id="@+id/nav_products"
+        android:name="com.floatingpanda.productlist.ui.products.ProductListFragment"
+        android:label="Products" />
+
+    <fragment
+        android:id="@+id/nav_categories"
+        android:name="com.floatingpanda.productlist.ui.categories.CategoriesListFragment"
+        android:label="Categories" />
+
+    <fragment
+        android:id="@+id/nav_export_import"
+        android:name="com.floatingpanda.productlist.ui.export_import.ExportImportFragment"
+        android:label="Export/Import" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.floatingpanda.productlist.ui.settings.SettingsFragment"
+        android:label="Settings" />
+
+    <fragment
+        android:id="@+id/nav_help"
+        android:name="com.floatingpanda.productlist.ui.help.HelpFragment"
+        android:label="Help" />
+</navigation>
