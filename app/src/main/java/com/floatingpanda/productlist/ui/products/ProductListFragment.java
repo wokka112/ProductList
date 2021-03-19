@@ -4,15 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.floatingpanda.productlist.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ProductListFragment extends Fragment {
 
@@ -20,8 +20,53 @@ public class ProductListFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_products_list, container, false);
+        View root = inflater.inflate(R.layout.fragment_product_list, container, false);
+
+        FloatingActionButton addFab, searchFab;
+
+        addFab = root.findViewById(R.id.product_add_fab);
+        searchFab = root.findViewById(R.id.product_search_fab);
+
+        addFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToAddProduct();
+            }
+        });
+
+        searchFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToBarcodeSearch();
+            }
+        });
+
+        //TODO remove once implemented list
+        Button detailsButton;
+        detailsButton = root.findViewById(R.id.product_details_button);
+
+        detailsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToProductDetails();
+            }
+        });
 
         return root;
+    }
+
+    private void navigateToAddProduct() {
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.navigate(ProductListFragmentDirections.actionNavProductListToNavProductAdd());
+    }
+
+    private void navigateToProductDetails() {
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.navigate(ProductListFragmentDirections.actionNavProductListToNavProductDetails());
+    }
+
+    private void navigateToBarcodeSearch() {
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.navigate(ProductListFragmentDirections.actionNavProductListToNavProductSearchBarcode());
     }
 }

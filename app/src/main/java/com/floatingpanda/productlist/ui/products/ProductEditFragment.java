@@ -1,4 +1,4 @@
-package com.floatingpanda.productlist.ui.categories;
+package com.floatingpanda.productlist.ui.products;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,15 +11,17 @@ import androidx.fragment.app.Fragment;
 
 import com.floatingpanda.productlist.R;
 
-public class CategoriesListFragment extends Fragment {
-
-    CategoryViewModel categoryViewModel;
+public class ProductEditFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_categories_list, container, false);
+        View root = inflater.inflate(R.layout.fragment_product_add_edit, container, false);
 
         return root;
+    }
+
+    private void navigateBackToProductDetails() {
+
     }
 }
