@@ -52,12 +52,18 @@ public interface ProductDao {
     LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByName();
 
     @Transaction
+    @Query("SELECT * FROM products ORDER BY price")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByPrice();
+
+    @Transaction
     @Query("SELECT * FROM products WHERE id LIKE :id")
     LiveData<ProductWithCategory> getProductWithCategoryByProductId(long id);
 
     @Transaction
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
+    @Query("SELECT * FROM products WHERE barcode LIKE :barcode ORDER BY name")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode);
+
+    //TODO add a method to getProductsWithCategoryByExactBarcode ordered by price???
 
     @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId")

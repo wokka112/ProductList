@@ -13,7 +13,8 @@ import java.util.List;
 @Dao
 public interface CategoryDao {
 
-    @Query("SELECT * FROM categories")
+    // Returns all categories in alphabetic order
+    @Query("SELECT * FROM categories ORDER BY name")
     LiveData<List<Category>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

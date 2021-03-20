@@ -73,6 +73,14 @@ public class CategoryDaoTest {
         List<Category> categories = LiveDataTestUtil.getValue(categoryDao.getAll());
 
         assertThat(categories.size(), is(TestData.CATEGORIES.size()));
+
+        for (int i = 1; i < categories.size() - 1; i++) {
+            String previousCategoryName = categories.get(i-1).getName();
+            String currentCategoryName = categories.get(i).getName();
+            // Tests whether the category at i - 1 in the list should alphabetically come before the
+            // category at i
+            assertTrue(previousCategoryName.compareTo(currentCategoryName) <= 0);
+        }
     }
 
     @Test
