@@ -3,7 +3,6 @@ package com.floatingpanda.productlist.repositories;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.FtsOptions;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.floatingpanda.productlist.OrderByEnum;
@@ -29,16 +28,29 @@ public class ProductRepository {
         productDao = appDatabase.productDao();
     }
 
-    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByName() {
-        return productDao.getProductsWithCategoryOrderedByName();
+    //TODO combine these into a single method using an OrderByEnum to determine ordering?
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByNameAsc() {
+        return productDao.getProductsWithCategoryOrderedByNameAsc();
     }
 
-    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByBarcode() {
-        return productDao.getProductsWithCategoryOrderedByBarcode();
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByNameDesc() {
+        return productDao.getProductsWithCategoryOrderedByNameDesc();
     }
 
-    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByPrice() {
-        return productDao.getProductsWithCategoryOrderedByPrice();
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByBarcodeAsc() {
+        return productDao.getProductsWithCategoryOrderedByBarcodeAsc();
+    }
+
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByBarcodeDesc() {
+        return productDao.getProductsWithCategoryOrderedByBarcodeDesc();
+    }
+
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByPriceAsc() {
+        return productDao.getProductsWithCategoryOrderedByPriceAsc();
+    }
+
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByPriceDesc() {
+        return productDao.getProductsWithCategoryOrderedByPriceDesc();
     }
 
     public LiveData<ProductWithCategory> getProductWithCategoryByProductId(long productId) {
@@ -81,12 +93,45 @@ public class ProductRepository {
         });
     }
 
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode) {
-        return productDao.getProductsWithCategoryByExactBarcode(barcode);
+    //TODO combine these into a single method using the OrderByEnum to decide how to order the resulting list???
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByNameAsc(String barcode) {
+        return productDao.getProductsWithCategoryByExactBarcodeOrderedByNameAsc(barcode);
     }
 
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId) {
-        return productDao.getProductsWithCategoryByCategoryId(categoryId);
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByNameDesc(String barcode) {
+        return productDao.getProductsWithCategoryByExactBarcodeOrderedByNameDesc(barcode);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByPriceAsc(String barcode) {
+        return productDao.getProductsWithCategoryByExactBarcodeOrderedByPriceAsc(barcode);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByPriceDesc(String barcode) {
+        return productDao.getProductsWithCategoryByExactBarcodeOrderedByPriceDesc(barcode);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByNameAsc(long categoryId) {
+        return productDao.getProductsWithCategoryByCategoryIdOrderedByNameAsc(categoryId);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByNameDesc(long categoryId) {
+        return productDao.getProductsWithCategoryByCategoryIdOrderedByNameDesc(categoryId);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByBarcodeAsc(long categoryId) {
+        return productDao.getProductsWithCategoryByCategoryIdOrderedByBarcodeAsc(categoryId);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByBarcodeDesc(long categoryId) {
+        return productDao.getProductsWithCategoryByCategoryIdOrderedByBarcodeDesc(categoryId);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByPriceAsc(long categoryId) {
+        return productDao.getProductsWithCategoryByCategoryIdOrderedByPriceAsc(categoryId);
+    }
+
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByPriceDesc(long categoryId) {
+        return productDao.getProductsWithCategoryByCategoryIdOrderedByPriceDesc(categoryId);
     }
 
     public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
@@ -107,15 +152,11 @@ public class ProductRepository {
         return productDao.searchProductsWithCategory(query);
     }
 
-    //TODO add in searches which order by barcode, name or price.
-    // also need to add in query creators which take an orderBy parameter. Probably set to be
-    // a string, although could use an enum. If the element is not null (or NO_ORDER enum value),
-    // don't include ORDER BY, otherwise include ORDER BY orderBy.
-
     /**
      * Searches the database and returns a list of products with categories, filtered by name,
      * barcode, category id and price, or any combination of these. Partial names and partial
-     * barcodes can be used.
+     * barcodes can be used. The orderBy enum dictates how the list will be ordered: alphabetically
+     * by name, numerically by barcode, based on value in prices.
      *
      * If barcode is set to null, products won't be filtered by barcodes.
      * If name is set to null, products won't be filtered by names.
@@ -135,6 +176,7 @@ public class ProductRepository {
      * @param categoryId
      * @param lowerPrice
      * @param higherPrice
+     * @param orderBy
      * @return
      */
     private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,

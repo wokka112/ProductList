@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 
 import com.floatingpanda.productlist.OrderByEnum;
 import com.floatingpanda.productlist.db.AppDatabase;
-import com.floatingpanda.productlist.db.Category;
 import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductWithCategory;
@@ -27,7 +26,7 @@ public class ProductViewModel extends AndroidViewModel {
         super(application);
         productRepository = new ProductRepository(application);
         categoryRepository = new CategoryRepository(application);
-        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByName();
+        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByNameAsc();
     }
 
     // Used for testing purposes.
@@ -35,7 +34,7 @@ public class ProductViewModel extends AndroidViewModel {
         super(application);
         productRepository = new ProductRepository(application);
         categoryRepository = new CategoryRepository(application);
-        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByName();
+        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByNameAsc();
     }
 
     public LiveData<List<ProductWithCategory>> getProductsWithCategories() {
@@ -94,15 +93,15 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     public void sortProductsByName() {
-        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByName();
+        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByNameAsc();
     }
 
     public void sortProductsByBarcode() {
-        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByBarcode();
+        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByBarcodeAsc();
     }
 
     public void sortProductsByPrice() {
-        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByBarcode();
+        productsWithCategories = productRepository.getAllProductsWithCategoryOrderedByBarcodeAsc();
     }
 
     /**
@@ -114,7 +113,7 @@ public class ProductViewModel extends AndroidViewModel {
      * @param barcode a product's barcode in string form
      */
     public void searchProductsByBarcode(String barcode) {
-        productsWithCategories = productRepository.getProductsWithCategoryByExactBarcode(barcode);
+        productsWithCategories = productRepository.getProductsWithCategoryByExactBarcodeOrderedByNameAsc(barcode);
     }
 
     public void searchProducts(String barcode, String name, long categoryId, float lowerPrice, float higherPrice, OrderByEnum orderBy) {

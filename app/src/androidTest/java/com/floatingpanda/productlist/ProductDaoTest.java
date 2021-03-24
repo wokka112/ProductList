@@ -321,13 +321,50 @@ public class ProductDaoTest {
         assertTrue(products.isEmpty());
     }
 
+
     @Test
-    public void getAllProductsWithCategoryOrderedByBarcode() throws InterruptedException {
+    public void getAllProductsWithCategoryOrderedByNameAsc() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
         List<ProductWithCategory> productsWithCategory =
-                LiveDataTestUtil.getValue(productDao.getProductsWithCategoryOrderedByBarcode());
+                LiveDataTestUtil.getValue(productDao.getProductsWithCategoryOrderedByNameAsc());
+
+        assertThat(productsWithCategory.size(), is(TestData.PRODUCTS.size()));
+
+        String previousName = "";
+        for (ProductWithCategory productWithCategory : productsWithCategory) {
+            if (productWithCategory.getCategory() == null) {
+                continue;
+            }
+
+            assertThat(productWithCategory.getProduct().getCategoryId(), is(productWithCategory.getCategory().getId()));
+
+            for (Category category : TestData.CATEGORIES) {
+                if (productWithCategory.getCategory().getId() == category.getId()) {
+                    assertTrue(productWithCategory.getCategory().getName().equals(category.getName()));
+                }
+            }
+
+            String name = productWithCategory.getProduct().getName();
+            assertTrue(previousName.compareTo(name) <= 0);
+
+            previousName = name;
+        }
+    }
+
+    @Test
+    public void getAllProductsWithCategoryOrderedByNameDesc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getAllProductsWithCategoryOrderedByBarcodeAsc() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        List<ProductWithCategory> productsWithCategory =
+                LiveDataTestUtil.getValue(productDao.getProductsWithCategoryOrderedByBarcodeAsc());
 
         assertThat(productsWithCategory.size(), is(TestData.PRODUCTS.size()));
 
@@ -353,34 +390,18 @@ public class ProductDaoTest {
     }
 
     @Test
-    public void getAllProductsWithCategoryOrderedByName() throws InterruptedException {
-        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
-        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+    public void getAllProductsWithCategoryOrderedByBarcodeDesc() throws InterruptedException {
+        //TODO write test
+    }
 
-        List<ProductWithCategory> productsWithCategory =
-                LiveDataTestUtil.getValue(productDao.getProductsWithCategoryOrderedByName());
+    @Test
+    public void getAllProductsWithCategoryOrderedByPriceAsc() throws InterruptedException {
+        //TODO write test
+    }
 
-        assertThat(productsWithCategory.size(), is(TestData.PRODUCTS.size()));
-
-        String previousName = "";
-        for (ProductWithCategory productWithCategory : productsWithCategory) {
-            if (productWithCategory.getCategory() == null) {
-                continue;
-            }
-
-            assertThat(productWithCategory.getProduct().getCategoryId(), is(productWithCategory.getCategory().getId()));
-
-            for (Category category : TestData.CATEGORIES) {
-                if (productWithCategory.getCategory().getId() == category.getId()) {
-                    assertTrue(productWithCategory.getCategory().getName().equals(category.getName()));
-                }
-            }
-
-            String name = productWithCategory.getProduct().getName();
-            assertTrue(previousName.compareTo(name) <= 0);
-
-            previousName = name;
-        }
+    @Test
+    public void getAllProductsWithCategoryOrderedByPriceDesc() throws InterruptedException {
+        //TODO write test
     }
 
     @Test
@@ -407,27 +428,67 @@ public class ProductDaoTest {
         assertNull(productWithCategory.getCategory());
     }
 
+    //TODO add test which gets multiple items and checks they are ordered by name
     @Test
-    public void getProductsWithCategoryByExactBarcode() throws InterruptedException {
+    public void getProductsWithCategoryByExactBarcodeOrderedByNameAsc() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
-                productDao.getProductsWithCategoryByExactBarcode(TestData.PRODUCT_1.getBarcode()));
+                productDao.getProductsWithCategoryByExactBarcodeOrderedByNameAsc(TestData.PRODUCT_1.getBarcode()));
 
         // Only 1 product with this barcode
         int fullBarcodeListSize = 1;
         assertThat(productsWithCategories.size(), is(fullBarcodeListSize));
+    }
 
-        //TODO add test which gets multiple items and checks they are ordered by name
+    @Test
+    public void getProductsWithCategoryByExactBarcodeOrderedByNameDesc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByExactBarcodeOrderedByPriceAsc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByExactBarcodeOrderedByPriceDesc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdOrderedByNameAsc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdOrderedByNameDesc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdOrderedByBarcodeAsc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdOrderedByBarcodeDesc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdOrderedByPriceAsc() throws InterruptedException {
+        //TODO write test
+    }
+
+    @Test
+    public void getProductsWithCategoryByCategoryIdOrderedByPriceDesc() throws InterruptedException {
+        //TODO write test
     }
 
     // TESTS OF GENERAL PURPOSE SEARCH FUNCTION //
 
-    // Search with partial name
-    // - Partial name at start of product
-    // - Partial name in mid of product
-    // - Partial name at end of product
     @Test
     public void searchProductsWithCategoryByPartialName() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -479,7 +540,6 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_3));
     }
 
-    // Search with exact name
     @Test
     public void searchProductsWithCategoryByExactName() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -508,7 +568,6 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_3));
     }
 
-    // Search with partial barcode
     @Test
     public void searchProductsWithCategoryByPartialBarcode() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -560,7 +619,6 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_4));
     }
 
-    // Search with exact barcode
     @Test
     public void searchProductsWithCategoryByGeneralSearchWithExactBarcode() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -586,7 +644,6 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_4));
     }
 
-    // Search with category id
     @Test
     public void searchProductsWithCategoryByCategoryId() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -630,7 +687,6 @@ public class ProductDaoTest {
         assertTrue(products.contains(TestData.PRODUCT_2));
     }
 
-    // Search with lower price
     @Test
     public void searchProductsWithCategoryByLowerPrice() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -665,7 +721,6 @@ public class ProductDaoTest {
         assertTrue(products.contains(TestData.PRODUCT_3));
     }
 
-    // Search with higher price
     @Test
     public void searchProductsWithCategoryByHigherPrice() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -700,7 +755,6 @@ public class ProductDaoTest {
         assertTrue(products.contains(TestData.PRODUCT_4));
     }
 
-    // Search with lower price and higher price which are different
     @Test
     public void searchProductsWithCategoryByDifferentLowerPriceAndHigherPrice() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -737,7 +791,6 @@ public class ProductDaoTest {
         assertTrue(products.contains(TestData.PRODUCT_4));
     }
 
-    // Search with lower price and higher price which are the same
     @Test
     public void searchProductsWithCategoryBySameLowerPriceAndHigherPrice() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -763,8 +816,6 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.size(), is(listSize));
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_1));
     }
-
-    //TODO write simple tests for different order by settings
 
     //TODO write search tests combining test cases from above
     //name and barcode
@@ -792,7 +843,7 @@ public class ProductDaoTest {
     //name and barcode and category id and lower price and higher price
 
     @Test
-    public void searchProductsWithCategoryByPotentialRealisticSearch() throws InterruptedException {
+    public void searchProductsWithCategoryByRealisticSearch() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
@@ -821,6 +872,38 @@ public class ProductDaoTest {
 
         assertTrue(products.contains(TestData.PRODUCT_1));
         assertTrue(products.contains(TestData.PRODUCT_3));
+    }
+
+    //TODO write simple tests for different order by settings
+    //Search ordered by name DESC
+    @Test
+    public void searchProductsWithCategoryOrderedByNameDesc() throws InterruptedException {
+        // Do search which gets all products as results
+        // Test that they are ordered properly
+    }
+
+    //Search ordered by barcode ASC
+    @Test
+    public void searchProductsWithCategoryOrderedByBarcodeAsc() throws InterruptedException {
+
+    }
+
+    //Search ordered by barcode DESC
+    @Test
+    public void searchProductsWithCategoryOrderedByBarcodeDesc() throws InterruptedException {
+
+    }
+
+    //Search ordered by price ASC
+    @Test
+    public void searchProductsWithCategoryOrderedByPriceAsc() throws InterruptedException {
+
+    }
+
+    //Search ordered by price DESC
+    @Test
+    public void searchProductsWithCategoryOrderedByPriceDesc() throws InterruptedException {
+
     }
 
     private SimpleSQLiteQuery createQuery(String barcode, String name, long categoryId, int lowerPrice, int higherPrice,
