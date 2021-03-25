@@ -44,9 +44,11 @@ public interface ProductDao {
     void deleteAll();
 
     @Transaction
-    @Query("SELECT * FROM products ORDER BY name ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByNameAsc();
+    @Query("SELECT * FROM products")
+    LiveData<List<ProductWithCategory>> getProductsWithCategory();
 
+    //TODO remove commented out sections
+    /*
     @Transaction
     @Query("SELECT * FROM products ORDER BY name DESC")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByNameDesc();
@@ -67,15 +69,17 @@ public interface ProductDao {
     @Query("SELECT * FROM products ORDER BY price DESC")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByPriceDesc();
 
+     */
+
     @Transaction
     @Query("SELECT * FROM products WHERE id LIKE :id")
     LiveData<ProductWithCategory> getProductWithCategoryByProductId(long id);
 
-    //TODO write product dao tests for these sorted lists
     @Transaction
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode ORDER BY name ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByNameAsc(String barcode);
+    @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode);
 
+    /*
     @Transaction
     @Query("SELECT * FROM products WHERE barcode LIKE :barcode ORDER BY name DESC")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByNameDesc(String barcode);
@@ -89,10 +93,14 @@ public interface ProductDao {
     @Query("SELECT * FROM products WHERE barcode LIKE :barcode ORDER BY price DESC")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByPriceDesc(String barcode);
 
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY name ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByNameAsc(long categoryId);
 
+     */
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId")
+    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId);
+
+    /*
     @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY name DESC")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByNameDesc(long categoryId);
@@ -112,6 +120,8 @@ public interface ProductDao {
     @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY price DESC")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByPriceDesc(long categoryId);
+
+     */
 
     @Transaction
     @RawQuery

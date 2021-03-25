@@ -28,11 +28,12 @@ public class ProductRepository {
         productDao = appDatabase.productDao();
     }
 
-    //TODO combine these into a single method using an OrderByEnum to determine ordering?
-    public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByNameAsc() {
-        return productDao.getProductsWithCategoryOrderedByNameAsc();
+    //TODO Removed commented out section
+    public LiveData<List<ProductWithCategory>> getAllProductsWithCategory() {
+        return productDao.getProductsWithCategory();
     }
 
+    /*
     public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByNameDesc() {
         return productDao.getProductsWithCategoryOrderedByNameDesc();
     }
@@ -52,6 +53,7 @@ public class ProductRepository {
     public LiveData<List<ProductWithCategory>> getAllProductsWithCategoryOrderedByPriceDesc() {
         return productDao.getProductsWithCategoryOrderedByPriceDesc();
     }
+     */
 
     public LiveData<ProductWithCategory> getProductWithCategoryByProductId(long productId) {
         return productDao.getProductWithCategoryByProductId(productId);
@@ -93,11 +95,12 @@ public class ProductRepository {
         });
     }
 
-    //TODO combine these into a single method using the OrderByEnum to decide how to order the resulting list???
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByNameAsc(String barcode) {
-        return productDao.getProductsWithCategoryByExactBarcodeOrderedByNameAsc(barcode);
+    //TODO remove commented out sections
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode) {
+        return productDao.getProductsWithCategoryByExactBarcode(barcode);
     }
 
+    /*
     public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByNameDesc(String barcode) {
         return productDao.getProductsWithCategoryByExactBarcodeOrderedByNameDesc(barcode);
     }
@@ -109,11 +112,13 @@ public class ProductRepository {
     public LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByPriceDesc(String barcode) {
         return productDao.getProductsWithCategoryByExactBarcodeOrderedByPriceDesc(barcode);
     }
+     */
 
-    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByNameAsc(long categoryId) {
-        return productDao.getProductsWithCategoryByCategoryIdOrderedByNameAsc(categoryId);
+    public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId) {
+        return productDao.getProductsWithCategoryByCategoryId(categoryId);
     }
 
+    /*
     public LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByNameDesc(long categoryId) {
         return productDao.getProductsWithCategoryByCategoryIdOrderedByNameDesc(categoryId);
     }
@@ -134,21 +139,23 @@ public class ProductRepository {
         return productDao.getProductsWithCategoryByCategoryIdOrderedByPriceDesc(categoryId);
     }
 
+     */
+
     public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
-            long categoryId, float lowerPrice, float higherPrice, OrderByEnum orderBy) {
-        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+            long categoryId, float lowerPrice, float higherPrice) {
+        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice);
         return productDao.searchProductsWithCategory(query);
     }
 
     public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
-            long categoryId, int lowerPrice, int higherPrice, OrderByEnum orderBy) {
-        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+            long categoryId, int lowerPrice, int higherPrice) {
+        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice);
         return productDao.searchProductsWithCategory(query);
     }
 
     public LiveData<List<ProductWithCategory>> searchProductsWithCategory(String barcode, String name,
-            long categoryId, Price lowerPrice, Price higherPrice, OrderByEnum orderBy) {
-        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+            long categoryId, Price lowerPrice, Price higherPrice) {
+        SimpleSQLiteQuery query = createSQLQuery(barcode, name, categoryId, lowerPrice, higherPrice);
         return productDao.searchProductsWithCategory(query);
     }
 
@@ -176,11 +183,10 @@ public class ProductRepository {
      * @param categoryId
      * @param lowerPrice
      * @param higherPrice
-     * @param orderBy
      * @return
      */
     private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
-                                             int lowerPrice, int higherPrice, OrderByEnum orderBy) {
+                                             int lowerPrice, int higherPrice) {
         String queryString = "SELECT * FROM products";
 
         List<Object> args = new ArrayList<>();
@@ -244,8 +250,6 @@ public class ProductRepository {
             args.add(higherPrice);
         }
 
-        queryString += createOrderByString(orderBy);
-
         return new SimpleSQLiteQuery(queryString, args.toArray());
     }
 
@@ -283,24 +287,24 @@ public class ProductRepository {
     }
 
     private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
-            float lowerPrice, float higherPrice, OrderByEnum orderBy) {
+            float lowerPrice, float higherPrice) {
         // Prices are stored in the database as integers with a value 100 times the original price
         // (e.g. £9.99 = 999). We convert the prices to integers that we can then compare with the
         // db stored prices.
         int lowerPriceInt = Math.round(lowerPrice * 100);
         int higherPriceInt = Math.round(higherPrice * 100);
 
-        return createSQLQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt, orderBy);
+        return createSQLQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt);
     }
 
     private SimpleSQLiteQuery createSQLQuery(String barcode, String name, long categoryId,
-            Price lowerPrice, Price higherPrice, OrderByEnum orderBy) {
+            Price lowerPrice, Price higherPrice) {
         // Prices are stored in the database as integers with a value 100 times the original price
         // (e.g. £9.99 = 999). We convert the prices to integers that we can then compare with the
         // db stored prices.
         int lowerPriceInt = (lowerPrice.getPounds() * 100) + lowerPrice.getPence();
         int higherPriceInt = (higherPrice.getPounds() * 100) + higherPrice.getPence();
 
-        return createSQLQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt, orderBy);
+        return createSQLQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt);
     }
 }

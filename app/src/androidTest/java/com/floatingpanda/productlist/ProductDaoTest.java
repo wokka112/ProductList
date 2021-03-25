@@ -197,13 +197,13 @@ public class ProductDaoTest {
         assertThat(products.get(0), is(TestData.PRODUCT_1));
         assertThat(products.get(0).getId(), is(TestData.PRODUCT_1.getId()));
 
-        String newBarcode = "41244123132";
         String newName = "Newwwwww Nameeeee";
+        String newBarcode = "41244123132";
         Price newPrice = new Price(6, 79);
         long newCategoryId = 5;
         String newNotes = "New Notes";
 
-        Product newProduct = new Product(TestData.PRODUCT_1.getId(), newBarcode, newName, newPrice, newCategoryId, newNotes);
+        Product newProduct = new Product(TestData.PRODUCT_1.getId(), newName, newBarcode, newPrice, newCategoryId, newNotes);
 
         productDao.update(newProduct);
         TimeUnit.MILLISECONDS.sleep(100);
@@ -233,21 +233,21 @@ public class ProductDaoTest {
             assertTrue(TestData.PRODUCTS.contains(product));
         }
 
-        String newName1 = "New Name 1";
         String newBarcode1 = "4012441845415";
+        String newName1 = "New Name 1";
         Price newPrice1 = new Price(6, 41);
         long newCategoryId1 = 8;
         String newNotes1 = "New Notes 1";
 
-        Product newProduct1 = new Product(TestData.PRODUCT_1.getId(), newBarcode1, newName1, newPrice1, newCategoryId1, newNotes1);
+        Product newProduct1 = new Product(TestData.PRODUCT_1.getId(), newName1, newBarcode1, newPrice1, newCategoryId1, newNotes1);
 
-        String newName2 = "New Name 2";
         String newBarcode2 = "5145481442104";
+        String newName2 = "New Name 2";
         Price newPrice2 = new Price(1, 46);
         long newCategoryId2 = 10;
         String newNotes2 = "New Notes 2";
 
-        Product newProduct2 = new Product(TestData.PRODUCT_2.getId(), newBarcode2, newName2, newPrice2, newCategoryId2, newNotes2);
+        Product newProduct2 = new Product(TestData.PRODUCT_2.getId(), newName2, newBarcode2, newPrice2, newCategoryId2, newNotes2);
 
         List<Product> updatedProducts = new ArrayList<>();
         updatedProducts.add(newProduct1);
@@ -321,14 +321,13 @@ public class ProductDaoTest {
         assertTrue(products.isEmpty());
     }
 
-
     @Test
-    public void getAllProductsWithCategoryOrderedByNameAsc() throws InterruptedException {
+    public void getAllProductsWithCategory() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
         List<ProductWithCategory> productsWithCategory =
-                LiveDataTestUtil.getValue(productDao.getProductsWithCategoryOrderedByNameAsc());
+                LiveDataTestUtil.getValue(productDao.getProductsWithCategory());
 
         assertThat(productsWithCategory.size(), is(TestData.PRODUCTS.size()));
 
@@ -346,18 +345,16 @@ public class ProductDaoTest {
                 }
             }
 
+            /*
             String name = productWithCategory.getProduct().getName();
             assertTrue(previousName.compareTo(name) <= 0);
 
             previousName = name;
+             */
         }
     }
 
-    @Test
-    public void getAllProductsWithCategoryOrderedByNameDesc() throws InterruptedException {
-        //TODO write test
-    }
-
+    /*
     @Test
     public void getAllProductsWithCategoryOrderedByBarcodeAsc() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
@@ -389,20 +386,7 @@ public class ProductDaoTest {
         }
     }
 
-    @Test
-    public void getAllProductsWithCategoryOrderedByBarcodeDesc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getAllProductsWithCategoryOrderedByPriceAsc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getAllProductsWithCategoryOrderedByPriceDesc() throws InterruptedException {
-        //TODO write test
-    }
+     */
 
     @Test
     public void getProductWithCategoryByProductId() throws InterruptedException {
@@ -428,63 +412,17 @@ public class ProductDaoTest {
         assertNull(productWithCategory.getCategory());
     }
 
-    //TODO add test which gets multiple items and checks they are ordered by name
     @Test
-    public void getProductsWithCategoryByExactBarcodeOrderedByNameAsc() throws InterruptedException {
+    public void getProductsWithCategoryByExactBarcode() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(
-                productDao.getProductsWithCategoryByExactBarcodeOrderedByNameAsc(TestData.PRODUCT_1.getBarcode()));
+                productDao.getProductsWithCategoryByExactBarcode(TestData.PRODUCT_1.getBarcode()));
 
         // Only 1 product with this barcode
         int fullBarcodeListSize = 1;
         assertThat(productsWithCategories.size(), is(fullBarcodeListSize));
-    }
-
-    @Test
-    public void getProductsWithCategoryByExactBarcodeOrderedByNameDesc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByExactBarcodeOrderedByPriceAsc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByExactBarcodeOrderedByPriceDesc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByCategoryIdOrderedByNameAsc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByCategoryIdOrderedByNameDesc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByCategoryIdOrderedByBarcodeAsc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByCategoryIdOrderedByBarcodeDesc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByCategoryIdOrderedByPriceAsc() throws InterruptedException {
-        //TODO write test
-    }
-
-    @Test
-    public void getProductsWithCategoryByCategoryIdOrderedByPriceDesc() throws InterruptedException {
-        //TODO write test
     }
 
     // TESTS OF GENERAL PURPOSE SEARCH FUNCTION //
@@ -516,7 +454,7 @@ public class ProductDaoTest {
         OrderByEnum orderBy = OrderByEnum.NAME;
 
         // Query to search with the partial name from start of the product name
-        SimpleSQLiteQuery startQuery = createQuery(barcode, startPartialName, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery startQuery = createQuery(startPartialName, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(startQuery));
 
@@ -526,14 +464,14 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_3));
 
         // Query to search with partial name from middle of the product name
-        SimpleSQLiteQuery midQuery = createQuery(barcode, midPartialName, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery midQuery = createQuery(midPartialName, barcode, categoryId, lowerPrice, higherPrice);
         productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(midQuery));
 
         assertThat(productsWithCategory.size(), is(listSize));
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_3));
 
         // Query to search with partial name from end of the product name
-        SimpleSQLiteQuery endQuery = createQuery(barcode, endPartialName, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery endQuery = createQuery(endPartialName, barcode, categoryId, lowerPrice, higherPrice);
         productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(endQuery));
 
         assertThat(productsWithCategory.size(), is(listSize));
@@ -558,7 +496,7 @@ public class ProductDaoTest {
         float higherPrice = 0;
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, exactName, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(exactName, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(query));
 
@@ -595,7 +533,7 @@ public class ProductDaoTest {
         OrderByEnum orderBy = OrderByEnum.NAME;
 
         // Query to search with the partial barcode from start of the product barcode
-        SimpleSQLiteQuery startQuery = createQuery(startPartialBarcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery startQuery = createQuery(name, startPartialBarcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(startQuery));
 
@@ -605,14 +543,14 @@ public class ProductDaoTest {
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_4));
 
         // Query to search with the partial barcode from middle of the product barcode
-        SimpleSQLiteQuery midQuery = createQuery(midPartialBarcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery midQuery = createQuery(name, midPartialBarcode, categoryId, lowerPrice, higherPrice);
         productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(midQuery));
 
         assertThat(productsWithCategory.size(), is(listSize));
         assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_4));
 
         // Query to search with the partial barcode from end of the product barcode
-        SimpleSQLiteQuery endQuery = createQuery(endPartialBarcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery endQuery = createQuery(name, endPartialBarcode, categoryId, lowerPrice, higherPrice);
         productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(endQuery));
 
         assertThat(productsWithCategory.size(), is(listSize));
@@ -634,7 +572,7 @@ public class ProductDaoTest {
         float higherPrice = 0;
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(query));
 
@@ -658,11 +596,11 @@ public class ProductDaoTest {
         float higherPrice = 0;
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(query));
 
-        // Only product 3 should have the category id associated with product 3.
+        // Only product 3 should have the category id associated with product 3, so searching should return 1 result.
         int listSize = 1;
 
         assertThat(productsWithCategory.size(), is(listSize));
@@ -670,7 +608,7 @@ public class ProductDaoTest {
 
         categoryId = TestData.PRODUCT_1.getCategoryId();
 
-        query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(query));
 
         // Product 1's category id is shared with product 2, so searching should return 2 results.
@@ -695,15 +633,15 @@ public class ProductDaoTest {
         // Product 2's price is low enough that the search should return 3 results - products 2, 3 and 5.
         Price lowerPrice = TestData.PRODUCT_2.getPrice();
 
-        String barcode = null;
         String name = null;
+        String barcode = null;
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
         // A higher price of 0 means the filter won't have an upper limit
         Price higherPrice = new Price(0, 0);
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(query));
 
@@ -729,15 +667,15 @@ public class ProductDaoTest {
         // Product 1's price is high enough that the search should return 2 results - products 1 and 4.
         Price higherPrice = TestData.PRODUCT_1.getPrice();
 
-        String barcode = null;
         String name = null;
+        String barcode = null;
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
         // A lower price of 0 means the filter won't have a lower limit
         Price lowerPrice = new Price(0, 0);
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(query));
 
@@ -764,13 +702,13 @@ public class ProductDaoTest {
         Price lowerPrice = TestData.PRODUCT_4.getPrice();
         Price higherPrice = TestData.PRODUCT_3.getPrice();
 
-        String barcode = null;
         String name = null;
+        String barcode = null;
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(query));
 
@@ -800,13 +738,65 @@ public class ProductDaoTest {
         Price lowerPrice = TestData.PRODUCT_1.getPrice();
         Price higherPrice = TestData.PRODUCT_1.getPrice();
 
-        String barcode = null;
         String name = null;
+        String barcode = null;
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
+        List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
+                productDao.searchProductsWithCategory(query));
+
+        // Product 1's price as both lower and higher price should return product 1 as the only result.
+        int listSize = 1;
+
+        assertThat(productsWithCategory.size(), is(listSize));
+        assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_1));
+    }
+
+    @Test
+    public void searchProductsWithCategoryBySameLowerPriceAndHigherPriceWithEmptyStringNameAndBarcode() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        // These prices should result in just product 1 being returned
+        Price lowerPrice = TestData.PRODUCT_1.getPrice();
+        Price higherPrice = TestData.PRODUCT_1.getPrice();
+
+        String name = "";
+        String barcode = "";
+        // A categoryId of 0 doesn't filter search results by category id
+        long categoryId = 0;
+        OrderByEnum orderBy = OrderByEnum.NAME;
+
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
+        List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
+                productDao.searchProductsWithCategory(query));
+
+        // Product 1's price as both lower and higher price should return product 1 as the only result.
+        int listSize = 1;
+
+        assertThat(productsWithCategory.size(), is(listSize));
+        assertThat(productsWithCategory.get(0).getProduct(), is(TestData.PRODUCT_1));
+    }
+
+    @Test
+    public void searchProductsWithCategoryBySameLowerPriceAndHigherPriceWithWhiteSpaceNameAndBarcode() throws InterruptedException {
+        categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
+        productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
+
+        // These prices should result in just product 1 being returned
+        Price lowerPrice = TestData.PRODUCT_1.getPrice();
+        Price higherPrice = TestData.PRODUCT_1.getPrice();
+
+        String name = "             ";
+        String barcode = "                              ";
+        // A categoryId of 0 doesn't filter search results by category id
+        long categoryId = 0;
+        OrderByEnum orderBy = OrderByEnum.NAME;
+
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
                 productDao.searchProductsWithCategory(query));
 
@@ -850,14 +840,14 @@ public class ProductDaoTest {
         Product product = LiveDataTestUtil.getValue(productDao.getProductById(TestData.PRODUCT_3.getId()));
         assertNotNull(product);
 
-        String barcode = "12345";
         String name = "p";
+        String barcode = "12345";
         long categoryId = 0;
         float lowerPrice = 5.49f;
         float higherPrice = 20.27f;
         OrderByEnum orderBy = OrderByEnum.NAME;
 
-        SimpleSQLiteQuery query = createQuery(barcode, name, categoryId, lowerPrice, higherPrice, orderBy);
+        SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         Log.w("ProductDaoTest", "Query made: " + query.getSql());
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(productDao.searchProductsWithCategory(query));
 
@@ -906,8 +896,7 @@ public class ProductDaoTest {
 
     }
 
-    private SimpleSQLiteQuery createQuery(String barcode, String name, long categoryId, int lowerPrice, int higherPrice,
-                                          OrderByEnum orderBy) {
+    private SimpleSQLiteQuery createQuery(String name, String barcode, long categoryId, int lowerPrice, int higherPrice) {
         String queryString = "SELECT * FROM products";
 
         List<Object> args = new ArrayList<>();
@@ -915,22 +904,21 @@ public class ProductDaoTest {
         // Tracks whether already using a WHERE clause in the query
         boolean whereStarted = false;
 
-        if (barcode != null && !barcode.trim().isEmpty()) {
-            queryString += " WHERE barcode LIKE '%' || ? || '%'";
-            args.add(barcode);
+        if (name != null && !name.trim().isEmpty()) {
+            queryString += "WHERE Upper(name) LIKE '%' || Upper(?) || '%'";
             whereStarted = true;
+            args.add(name);
         }
 
-        if (name != null && !name.trim().isEmpty()) {
+        if (barcode != null && !barcode.trim().isEmpty()) {
             if (!whereStarted) {
-                queryString += " WHERE";
+                queryString += " barcode LIKE '%' || ? || '%'";
                 whereStarted = true;
             } else {
                 queryString += " AND";
             }
 
-            queryString += " Upper(name) LIKE '%' || Upper(?) || '%'";
-            args.add(name);
+            args.add(barcode);
         }
 
         if (categoryId > 0) {
@@ -971,12 +959,11 @@ public class ProductDaoTest {
             args.add(higherPrice);
         }
 
-        queryString += createOrderByString(orderBy);
-
         Log.w("Test", "Query: " + queryString);
         return new SimpleSQLiteQuery(queryString, args.toArray());
     }
 
+    /*
     private String createOrderByString(OrderByEnum orderBy) {
         String queryString = "";
         switch (orderBy) {
@@ -1010,25 +997,26 @@ public class ProductDaoTest {
         return queryString;
     }
 
-    private SimpleSQLiteQuery createQuery(String barcode, String name, long categoryId, float lowerPrice, float higherPrice,
-                                          OrderByEnum orderBy) {
+     */
+
+    private SimpleSQLiteQuery createQuery(String name, String barcode, long categoryId, float lowerPrice, float higherPrice) {
         // Prices are stored in the database as integers with a value 100 times the original price
         // (e.g. £9.99 = 999). We convert the prices to integers that we can then compare with the
         // db stored prices.
         int lowerPriceInt = Math.round(lowerPrice * 100);
         int higherPriceInt = Math.round(higherPrice * 100);
 
-        return createQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt, orderBy);
+        return createQuery(name, barcode, categoryId, lowerPriceInt, higherPriceInt);
     }
 
-    private SimpleSQLiteQuery createQuery(String barcode, String name, long categoryId,
-                                             Price lowerPrice, Price higherPrice, OrderByEnum orderBy) {
+    private SimpleSQLiteQuery createQuery(String name, String barcode, long categoryId,
+                                             Price lowerPrice, Price higherPrice) {
         // Prices are stored in the database as integers with a value 100 times the original price
         // (e.g. £9.99 = 999). We convert the prices to integers that we can then compare with the
         // db stored prices.
         int lowerPriceInt = (lowerPrice.getPounds() * 100) + lowerPrice.getPence();
         int higherPriceInt = (higherPrice.getPounds() * 100) + higherPrice.getPence();
 
-        return createQuery(barcode, name, categoryId, lowerPriceInt, higherPriceInt, orderBy);
+        return createQuery(name, barcode, categoryId, lowerPriceInt, higherPriceInt);
     }
 }

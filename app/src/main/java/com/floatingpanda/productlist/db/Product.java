@@ -17,11 +17,11 @@ public class Product {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
-    @Nullable
-    private String barcode;
-
     @NonNull
     private String name;
+
+    @Nullable
+    private String barcode;
 
     // Describes a price in terms of British pounds and pence.
     // Price is stored in the DB as an integer which is 100 times larger than the price in pounds.
@@ -36,10 +36,10 @@ public class Product {
     @Nullable
     private String notes;
 
-    public Product(long id, String barcode, String name, Price price, long categoryId, String notes) {
+    public Product(long id, String name, String barcode, Price price, long categoryId, String notes) {
         this.id = id;
-        this.barcode = barcode;
         this.name = name;
+        this.barcode = barcode;
         this.price = price;
         this.categoryId = categoryId;
         this.notes = notes;
@@ -47,51 +47,51 @@ public class Product {
 
     //TODO go over these creation methods and remove unnecessary ones
     @Ignore
-    public Product(String barcode, String name, Price price, long categoryId, String notes) {
-        this(0, barcode, name, price, categoryId, notes);
+    public Product(String name, String barcode, Price price, long categoryId, String notes) {
+        this(0, name, barcode, price, categoryId, notes);
     }
 
     @Ignore
-    public Product(String barcode, String name, Price price, long categoryId) {
-        this(0, barcode, name, price, categoryId, "None");
+    public Product(String name, String barcode, Price price, long categoryId) {
+        this(0, name, barcode, price, categoryId, "None");
     }
 
     @Ignore
-    public Product(String barcode, String name, Price price, String notes) {
-        this(0, barcode, name, price, 0, notes);
+    public Product(String name, String barcode, Price price, String notes) {
+        this(0, name, barcode, price, 0, notes);
     }
 
     @Ignore
-    public Product(String barcode, String name, Price price) {
-        this(0, barcode, name, price, 0, "None");
+    public Product(String name, String barcode, Price price) {
+        this(0, name, barcode, price, 0, "None");
     }
 
     @Ignore
     public Product(String name, Price price, long categoryId, String notes) {
-        this(0, null, name, price, categoryId, notes);
+        this(0, name, null, price, categoryId, notes);
     }
 
     @Ignore
     public Product(String name, Price price, long categoryId) {
-        this(0, null, name, price, categoryId, "None");
+        this(0,  name, null, price, categoryId, "None");
     }
 
     @Ignore
     public Product(String name, Price price, String notes) {
-        this(0, null, name, price, 0, notes);
+        this(0, name, null, price, 0, notes);
     }
 
     @Ignore
     public Product(String name, Price price) {
-        this(0, null, name, price, 0, "None");
+        this(0, name, null, price, 0, "None");
     }
 
     public void setId(long id) { this.id = id; }
     public long getId() { return id; }
-    public void setBarcode(String barcode) { this.barcode = barcode; }
-    public String getBarcode() { return barcode; }
     public void setName(String name) { this.name = name; }
     public String getName() { return name; }
+    public void setBarcode(String barcode) { this.barcode = barcode; }
+    public String getBarcode() { return barcode; }
     public void setPrice(Price price) { this.price = price; }
     public Price getPrice() { return price; }
     public void setCategoryId(long categoryId) { this.categoryId = categoryId;}
