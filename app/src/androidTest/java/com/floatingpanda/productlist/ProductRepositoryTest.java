@@ -86,14 +86,14 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void getProductWithCategoryByProductId(long productId) throws InterruptedException {
+    public void getProductWithCategoryByProductId() throws InterruptedException {
         categoryDao.insertMultiple(TestData.CATEGORIES.toArray(new Category[TestData.CATEGORIES.size()]));
         productDao.insertMultiple(TestData.PRODUCTS.toArray(new Product[TestData.PRODUCTS.size()]));
 
         ProductWithCategory productWithCategory = LiveDataTestUtil.getValue(productRepository.getProductWithCategoryByProductId(TestData.PRODUCT_1.getId()));
 
         assertNotNull(productWithCategory);
-        assertThat(productWithCategory, is(TestData.PRODUCT_1));
+        assertThat(productWithCategory.getProduct(), is(TestData.PRODUCT_1));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ProductRepositoryTest {
         productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(1));
-        assertThat(productsWithCategories.get(0), is(TestData.PRODUCT_1));
+        assertThat(productsWithCategories.get(0).getProduct(), is(TestData.PRODUCT_1));
     }
 
     @Test
@@ -127,7 +127,14 @@ public class ProductRepositoryTest {
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(productsToAdd.size()));
-        assertFalse(productsWithCategories.contains(TestData.PRODUCT_3));
+
+        List<Product> productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertFalse(productsInDb.contains(TestData.PRODUCT_3));
 
         productRepository.addProduct(TestData.PRODUCT_3);
         TimeUnit.MILLISECONDS.sleep(100);
@@ -135,7 +142,14 @@ public class ProductRepositoryTest {
         productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(productsToAdd.size() + 1));
-        assertTrue(productsWithCategories.contains(TestData.PRODUCT_3));
+
+        productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(productsInDb.contains(TestData.PRODUCT_3));
     }
 
     @Test
@@ -146,7 +160,7 @@ public class ProductRepositoryTest {
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(1));
-        assertThat(productsWithCategories.get(0), is(TestData.PRODUCT_1));
+        assertThat(productsWithCategories.get(0).getProduct(), is(TestData.PRODUCT_1));
 
         productRepository.addProduct(TestData.PRODUCT_1);
         TimeUnit.MILLISECONDS.sleep(100);
@@ -154,7 +168,7 @@ public class ProductRepositoryTest {
         productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(1));
-        assertThat(productsWithCategories.get(0), is(TestData.PRODUCT_1));
+        assertThat(productsWithCategories.get(0).getProduct(), is(TestData.PRODUCT_1));
     }
 
     @Test
@@ -175,7 +189,14 @@ public class ProductRepositoryTest {
         productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(productsToAdd.size()));
-        assertTrue(productsWithCategories.containsAll(productsToAdd));
+
+        List<Product> productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(productsInDb.containsAll(productsToAdd));
     }
 
     @Test
@@ -191,7 +212,14 @@ public class ProductRepositoryTest {
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(productsToAdd.size()));
-        assertTrue(productsWithCategories.containsAll(productsToAdd));
+
+        List<Product> productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(productsInDb.containsAll(productsToAdd));
 
         List<ProductWithCategory> otherProductsToAdd = new ArrayList<>();
         productsToAdd.add(TestData.PRODUCT_3);
@@ -203,8 +231,15 @@ public class ProductRepositoryTest {
         productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(productsToAdd.size() + otherProductsToAdd.size()));
-        assertTrue(productsWithCategories.containsAll(productsToAdd));
-        assertTrue(productsWithCategories.containsAll(otherProductsToAdd));
+
+        productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(productsInDb.containsAll(productsToAdd));
+        assertTrue(productsInDb.containsAll(otherProductsToAdd));
     }
 
     @Test
@@ -220,7 +255,14 @@ public class ProductRepositoryTest {
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(productsToAdd.size()));
-        assertTrue(productsWithCategories.containsAll(productsToAdd));
+
+        List<Product> productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(productsInDb.containsAll(productsToAdd));
 
         productRepository.addProducts(productsToAdd.toArray(new Product[productsToAdd.size()]));
         TimeUnit.MILLISECONDS.sleep(100);
@@ -228,7 +270,14 @@ public class ProductRepositoryTest {
         productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(productsToAdd.size()));
-        assertTrue(productsWithCategories.containsAll(productsToAdd));
+
+        productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(productsInDb.containsAll(productsToAdd));
     }
 
     @Test
@@ -284,7 +333,7 @@ public class ProductRepositoryTest {
         ProductWithCategory productWithCategory = LiveDataTestUtil.getValue(productRepository.getProductWithCategoryByProductId(TestData.PRODUCT_2.getId()));
 
         assertNotNull(productWithCategory);
-        assertThat(productWithCategory, is(TestData.PRODUCT_2));
+        assertThat(productWithCategory.getProduct(), is(TestData.PRODUCT_2));
 
         productRepository.deleteProduct(TestData.PRODUCT_2);
         TimeUnit.MILLISECONDS.sleep(100);
@@ -296,7 +345,10 @@ public class ProductRepositoryTest {
         List<ProductWithCategory> productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(TestData.PRODUCTS.size() - 1));
-        assertFalse(productsWithCategories.contains(TestData.PRODUCT_2));
+
+        for(ProductWithCategory productWithCategory1 : productsWithCategories) {
+            assertFalse(productWithCategory1.getProduct() == TestData.PRODUCT_2);
+        }
     }
 
     @Test
@@ -312,7 +364,13 @@ public class ProductRepositoryTest {
         productsToDelete.add(TestData.PRODUCT_2);
         productsToDelete.add(TestData.PRODUCT_3);
 
-        assertTrue(productsWithCategories.containsAll(productsToDelete));
+        List<Product> productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertTrue(productsInDb.containsAll(productsToDelete));
 
         productRepository.deleteProducts(productsToDelete.toArray(new Product[productsToDelete.size()]));
         TimeUnit.MILLISECONDS.sleep(100);
@@ -320,7 +378,14 @@ public class ProductRepositoryTest {
         productsWithCategories = LiveDataTestUtil.getValue(productRepository.getAllProductsWithCategory());
 
         assertThat(productsWithCategories.size(), is(TestData.PRODUCTS.size() - productsToDelete.size()));
-        assertFalse(productsWithCategories.containsAll(productsToDelete));
+
+        productsInDb = new ArrayList<>();
+
+        for (ProductWithCategory productWithCategory : productsWithCategories) {
+            productsInDb.add(productWithCategory.getProduct());
+        }
+
+        assertFalse(productsInDb.containsAll(productsToDelete));
     }
 
     @Test

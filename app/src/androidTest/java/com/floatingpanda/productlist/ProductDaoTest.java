@@ -905,19 +905,20 @@ public class ProductDaoTest {
         boolean whereStarted = false;
 
         if (name != null && !name.trim().isEmpty()) {
-            queryString += "WHERE Upper(name) LIKE '%' || Upper(?) || '%'";
+            queryString += " WHERE Upper(name) LIKE '%' || Upper(?) || '%'";
             whereStarted = true;
             args.add(name);
         }
 
         if (barcode != null && !barcode.trim().isEmpty()) {
             if (!whereStarted) {
-                queryString += " barcode LIKE '%' || ? || '%'";
+                queryString += " WHERE";
                 whereStarted = true;
             } else {
                 queryString += " AND";
             }
 
+            queryString += " barcode LIKE '%' || ? || '%'";
             args.add(barcode);
         }
 

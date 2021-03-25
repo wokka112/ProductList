@@ -22,11 +22,11 @@ public class TestData {
 
     // Product 1 and Product 3 should be the only products with barcodes starting 12345.
     // Only products 1 and 2 should have category id 1
-    public static final Product PRODUCT_1 = new Product(4, "1234567890123", "Taps", PRODUCT_1_PRICE, 1, "None");
-    public static final Product PRODUCT_2 = new Product(5, "3210987654321", "Sink", PRODUCT_2_PRICE, 1, "Notesssss");
-    public static final Product PRODUCT_3 = new Product(6, "1234509876109", "Pillows", PRODUCT_3_PRICE, 2, "Flippledee");
-    public static final Product PRODUCT_4 = new Product(7, "0897621453857", "Sweets", PRODUCT_4_PRICE, 0, "Floopledoo");
-    public static final Product PRODUCT_5 = new Product(8, "3210987654321", "Something", PRODUCT_5_PRICE, 0, "Amazing");
+    public static final Product PRODUCT_1 = new Product(4, "Taps", "1234567890123", PRODUCT_1_PRICE, 1, "None");
+    public static final Product PRODUCT_2 = new Product(5, "Sink",  "3210987654321",PRODUCT_2_PRICE, 1, "Notesssss");
+    public static final Product PRODUCT_3 = new Product(6, "Pillows",  "1234509876109",PRODUCT_3_PRICE, 2, "Flippledee");
+    public static final Product PRODUCT_4 = new Product(7, "Sweets",  "0897621453857",PRODUCT_4_PRICE, 0, "Floopledoo");
+    public static final Product PRODUCT_5 = new Product(8, "Something",  "3210987654321",PRODUCT_5_PRICE, 0, "Amazing");
 
     public static final List<Product> PRODUCTS = Arrays.asList(PRODUCT_1, PRODUCT_2, PRODUCT_3, PRODUCT_4, PRODUCT_5);
 }
