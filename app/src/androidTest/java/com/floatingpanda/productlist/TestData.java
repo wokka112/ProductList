@@ -3,6 +3,7 @@ package com.floatingpanda.productlist;
 import com.floatingpanda.productlist.db.Category;
 import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
+import com.floatingpanda.productlist.db.ProductWithCategory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,4 +30,16 @@ public class TestData {
     public static final Product PRODUCT_5 = new Product(8, "Something",  "3210987654321",PRODUCT_5_PRICE, 0, "Amazing");
 
     public static final List<Product> PRODUCTS = Arrays.asList(PRODUCT_1, PRODUCT_2, PRODUCT_3, PRODUCT_4, PRODUCT_5);
+
+    public static final ProductWithCategory PRODUCT_1_WITH_CATEGORY = new ProductWithCategory(PRODUCT_1, CATEGORY_1);
+    public static final ProductWithCategory PRODUCT_2_WITH_CATEGORY = new ProductWithCategory(PRODUCT_2, CATEGORY_1);
+    public static final ProductWithCategory PRODUCT_3_WITH_CATEGORY = new ProductWithCategory(PRODUCT_3, CATEGORY_2);
+    public static final ProductWithCategory PRODUCT_4_WITH_CATEGORY = new ProductWithCategory(PRODUCT_4, null);
+    public static final ProductWithCategory PRODUCT_5_WITH_CATEGORY = new ProductWithCategory(PRODUCT_5, null);
+
+    public static final Price PRODUCT_TO_ADD_1_PRICE = new Price(7, 01);
+    public static final Product PRODUCT_TO_ADD_1 = new Product(9, "Entirely new item", "3210987654321", PRODUCT_TO_ADD_1_PRICE, 1, "FLIPPER");
+
+    public static final Price PRODUCT_TO_ADD_PRICE_2 = new Price(8, 74);
+    public static final Product PRODUCT_TO_ADD_2 = new Product(10, "Pepper", "1234576123009", PRODUCT_TO_ADD_PRICE_2, 1, "None");
 }

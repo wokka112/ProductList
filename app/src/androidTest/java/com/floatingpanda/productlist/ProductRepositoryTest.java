@@ -1,11 +1,9 @@
 package com.floatingpanda.productlist;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.room.Room;
-import androidx.sqlite.db.SimpleSQLiteQuery;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -16,7 +14,6 @@ import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
-import com.floatingpanda.productlist.repositories.CategoryRepository;
 import com.floatingpanda.productlist.repositories.ProductRepository;
 
 import org.junit.runner.RunWith;
@@ -25,10 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -588,7 +583,7 @@ public class ProductRepositoryTest {
         // A lower and higher price of 0 doesn't filter search results by price
         float lowerPrice = 0;
         float higherPrice = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         // This barcode should return a single result.
         int listSize = 1;

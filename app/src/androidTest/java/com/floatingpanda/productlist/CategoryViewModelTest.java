@@ -75,6 +75,8 @@ public class CategoryViewModelTest {
     @Test
     public void addCategoryWhenNoneInserted() throws InterruptedException {
         categoryViewModel.addCategory(TestData.CATEGORY_2);
+        TimeUnit.MILLISECONDS.sleep(100);
+
         List<Category> categories = LiveDataTestUtil.getValue(categoryViewModel.getCategories());
 
         assertThat(categories.size(), is(1));

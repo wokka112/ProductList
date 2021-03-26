@@ -47,30 +47,6 @@ public interface ProductDao {
     @Query("SELECT * FROM products")
     LiveData<List<ProductWithCategory>> getProductsWithCategory();
 
-    //TODO remove commented out sections
-    /*
-    @Transaction
-    @Query("SELECT * FROM products ORDER BY name DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByNameDesc();
-
-    @Transaction
-    @Query("SELECT * FROM products ORDER BY barcode ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByBarcodeAsc();
-
-    @Transaction
-    @Query("SELECT * FROM products ORDER BY barcode DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByBarcodeDesc();
-
-    @Transaction
-    @Query("SELECT * FROM products ORDER BY price ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByPriceAsc();
-
-    @Transaction
-    @Query("SELECT * FROM products ORDER BY price DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryOrderedByPriceDesc();
-
-     */
-
     @Transaction
     @Query("SELECT * FROM products WHERE id LIKE :id")
     LiveData<ProductWithCategory> getProductWithCategoryByProductId(long id);
@@ -79,51 +55,11 @@ public interface ProductDao {
     @Query("SELECT * FROM products WHERE barcode LIKE :barcode")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcode(String barcode);
 
-    /*
-    @Transaction
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode ORDER BY name DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByNameDesc(String barcode);
-
-    //TODO write product dao test
-    @Transaction
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode ORDER BY price ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByPriceAsc(String barcode);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE barcode LIKE :barcode ORDER BY price DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByExactBarcodeOrderedByPriceDesc(String barcode);
-
-
-     */
-
     @Transaction
     @Query("SELECT * FROM products WHERE category_id LIKE :categoryId")
     LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryId(long categoryId);
 
-    /*
     @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY name DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByNameDesc(long categoryId);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY barcode ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByBarcodeAsc(long categoryId);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY barcode DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByBarcodeDesc(long categoryId);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY price ASC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByPriceAsc(long categoryId);
-
-    @Transaction
-    @Query("SELECT * FROM products WHERE category_id LIKE :categoryId ORDER BY price DESC")
-    LiveData<List<ProductWithCategory>> getProductsWithCategoryByCategoryIdOrderedByPriceDesc(long categoryId);
-
-     */
-
-    @Transaction
-    @RawQuery
+    @RawQuery (observedEntities = {Product.class, Category.class})
     LiveData<List<ProductWithCategory>> searchProductsWithCategory(SupportSQLiteQuery query);
 }

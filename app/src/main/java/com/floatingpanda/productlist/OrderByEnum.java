@@ -2,10 +2,10 @@ package com.floatingpanda.productlist;
 
 public enum OrderByEnum {
     NO_ORDER,
-    NAME,
-    NAME_INVERTED,
-    BARCODE,
-    BARCODE_INVERTED,
-    PRICE,
-    PRICE_INVERTED
+    NAME_ASC,
+    NAME_DESC,
+    BARCODE_ASC,
+    BARCODE_DESC,
+    PRICE_ASC,
+    PRICE_DESC
 }

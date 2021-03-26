@@ -1,6 +1,8 @@
 package com.floatingpanda.productlist.ui.products;
 
 import android.app.Application;
+import android.text.format.Time;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -19,13 +21,20 @@ import com.floatingpanda.productlist.repositories.ProductRepository;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ProductViewModel extends AndroidViewModel {
     private ProductRepository productRepository;
     private CategoryRepository categoryRepository;
 
     private LiveData<List<ProductWithCategory>> unsortedProductsWithCategories;
+    // Used to sort the list of products in place, rather than querying database with different
+    // ORDER BY values repeatedly
     private MediatorLiveData<List<ProductWithCategory>> sortedProductsWithCategories;
+
+    // The sorted list should normally be ordered alphabetically and will be reset to this natural
+    // ordering in certain circumstances, such as when repopulated.
+    private final OrderByEnum naturalOrdering = OrderByEnum.NAME_ASC;
     private OrderByEnum currentOrdering;
 
     public ProductViewModel(Application application) {
@@ -35,23 +44,30 @@ public class ProductViewModel extends AndroidViewModel {
 
         unsortedProductsWithCategories = productRepository.getAllProductsWithCategory();
 
+        // Ordering always starts off alphabetically by name.
+        currentOrdering = naturalOrdering;
+
         sortedProductsWithCategories = new MediatorLiveData<>();
-        sortedProductsWithCategories.addSource(unsortedProductsWithCategories, new Observer<List<ProductWithCategory>>() {
-            @Override
-            public void onChanged(List<ProductWithCategory> productWithCategories) {
-                // set sorted list as new mediator value
-                sortedProductsWithCategories.setValue(sortProducts(productWithCategories));
-            }
-        });
+        addUnsortedProductsWithCategoriesToSortedProductsMediator(productRepository.getAllProductsWithCategory());
     }
 
     // Used for testing purposes.
     public ProductViewModel(Application application, AppDatabase database) {
         super(application);
-        productRepository = new ProductRepository(application);
-        categoryRepository = new CategoryRepository(application);
+        productRepository = new ProductRepository(database);
+        categoryRepository = new CategoryRepository(database);
         unsortedProductsWithCategories = productRepository.getAllProductsWithCategory();
+
+        // Ordering always starts off alphabetically by name.
+        currentOrdering = naturalOrdering;
+
+        sortedProductsWithCategories = new MediatorLiveData<>();
+        addUnsortedProductsWithCategoriesToSortedProductsMediator(productRepository.getAllProductsWithCategory());
     }
+
+    public OrderByEnum getNaturalOrdering() { return naturalOrdering; }
+
+    public OrderByEnum getCurrentOrdering() { return currentOrdering; }
 
     public LiveData<List<ProductWithCategory>> getUnsortedProductsWithCategories() {
         return unsortedProductsWithCategories;
@@ -112,49 +128,27 @@ public class ProductViewModel extends AndroidViewModel {
         deleteMultipleProducts(products.toArray(new Product[products.size()]));
     }
 
-    public void reorderProductList(OrderByEnum orderBy) {
+    public void reorderProductList(OrderByEnum orderBy) throws NullPointerException {
         currentOrdering = orderBy;
-        sortedProductsWithCategories.setValue(sortProducts(sortedProductsWithCategories.getValue()));
-    }
+        List<ProductWithCategory> productsWithCategories = sortedProductsWithCategories.getValue();
 
-    private List<ProductWithCategory> sortProducts(List<ProductWithCategory> productsWithCategories) {
-        switch(currentOrdering) {
-            case NAME:
-                //sort by name asc
-                Comparator<ProductWithCategory> byName =
-                        (ProductWithCategory product1, ProductWithCategory product2) -> product1.getProduct().getName().compareTo(product2.getProduct().getName());
-                productsWithCategories.sort(byName);
-                break;
-            case NAME_INVERTED:
-                //sort by name desc
-                break;
-            case BARCODE:
-                //sort by barcode asc
-                Comparator<ProductWithCategory> byBarcode =
-                        (ProductWithCategory product1, ProductWithCategory product2) -> product1.getProduct().getBarcode().compareTo(product2.getProduct().getBarcode());
-                productsWithCategories.sort(byBarcode);
-                break;
-            case BARCODE_INVERTED:
-                //sort by barcode desc
-                break;
-            case PRICE:
-                //sort by price asc
-                Comparator<ProductWithCategory> byPrice =
-                        (ProductWithCategory product1, ProductWithCategory product2) -> product1.getProduct().getPrice().compareTo(product2.getProduct().getPrice());
-                productsWithCategories.sort(byPrice);
-                break;
-            case PRICE_INVERTED:
-                //sort by price desc
-                break;
-            default:
-                throw new IllegalArgumentException("Not a recognised enum.");
+        if (productsWithCategories == null) {
+            throw new NullPointerException("reorderProductList() failed because LiveData is set to null");
+            // Could I create a thread, wait for the list to be non-null and then sort it?
+            // Create thread with runnable
+            //      sortedProductsWithCategories.wait(30000). (30 second timeout)
         }
-        return productsWithCategories;
+
+        Log.w("ProductViewModel", "Sorted Products value before sorting: " + sortedProductsWithCategories.getValue());
+        sortedProductsWithCategories.setValue(sortProducts(productsWithCategories));
     }
 
     public void populateListWithAllProductsWithCategories() {
-        currentOrdering = OrderByEnum.NAME;
-        unsortedProductsWithCategories = productRepository.getAllProductsWithCategory();
+        // Remove the old unsorted list from the sorted list mediator
+        removeUnsortedProductsWithCategoriesFromSortedProductsMediator();
+
+        // Add the new unsorted list to the sorted list mediator
+        addUnsortedProductsWithCategoriesToSortedProductsMediator(productRepository.getAllProductsWithCategory());
     }
 
     /**
@@ -165,18 +159,110 @@ public class ProductViewModel extends AndroidViewModel {
      * read by the device.
      * @param barcode a product's barcode in string form
      */
-    public void searchProductsByBarcode(String barcode) {
-        currentOrdering = OrderByEnum.NAME;
-        unsortedProductsWithCategories = productRepository.getProductsWithCategoryByExactBarcode(barcode);
+    public void searchProductsWithCategoryByBarcode(String barcode) {
+        // Remove the old unsorted list from the sorted list mediator
+        removeUnsortedProductsWithCategoriesFromSortedProductsMediator();
+
+        LiveData<List<ProductWithCategory>> searchedProducts = productRepository.getProductsWithCategoryByExactBarcode(barcode);
+
+        // Add the new unsorted list to the sorted list mediator
+        addUnsortedProductsWithCategoriesToSortedProductsMediator(searchedProducts);
     }
 
-    public void searchProducts(String barcode, String name, long categoryId, float lowerPrice, float higherPrice) {
-        currentOrdering = OrderByEnum.NAME;
-        unsortedProductsWithCategories = productRepository.searchProductsWithCategory(barcode, name, categoryId, lowerPrice, higherPrice);
+    public void filterProductsWithCategoryByCategoryId(long categoryId) {
+        // Remove the old unsorted list from the sorted list mediator
+        removeUnsortedProductsWithCategoriesFromSortedProductsMediator();
+
+        LiveData<List<ProductWithCategory>> filteredProducts = productRepository.getProductsWithCategoryByCategoryId(categoryId);
+
+        // Add the new unsorted list to the sorted list mediator
+        addUnsortedProductsWithCategoriesToSortedProductsMediator(filteredProducts);
     }
 
-    public void searchProducts(String barcode, String name, long categoryId, Price lowerPrice, Price higherPrice) {
-        currentOrdering = OrderByEnum.NAME;
-        unsortedProductsWithCategories = productRepository.searchProductsWithCategory(barcode, name, categoryId, lowerPrice, higherPrice);
+    public void searchProductsWithCategory(String barcode, String name, long categoryId, float lowerPrice, float higherPrice) {
+        // Remove the old unsorted list from the sorted list mediator
+        removeUnsortedProductsWithCategoriesFromSortedProductsMediator();
+
+        LiveData<List<ProductWithCategory>> searchedProducts = productRepository.searchProductsWithCategory(barcode, name, categoryId, lowerPrice, higherPrice);
+
+        // Add the new unsorted list to the sorted list mediator
+        addUnsortedProductsWithCategoriesToSortedProductsMediator(searchedProducts);
+    }
+
+    public void searchProductsWithCategory(String barcode, String name, long categoryId, Price lowerPrice, Price higherPrice) {
+        // Remove the old unsorted list from the sorted list mediator
+        removeUnsortedProductsWithCategoriesFromSortedProductsMediator();
+
+        LiveData<List<ProductWithCategory>> searchedProducts = productRepository.searchProductsWithCategory(barcode, name, categoryId, lowerPrice, higherPrice);
+
+        // Add the new unsorted list to the sorted list mediator
+        addUnsortedProductsWithCategoriesToSortedProductsMediator(searchedProducts);
+    }
+
+    // ------------------------------------ PRIVATE METHODS ------------------------------------ //
+
+    private void addUnsortedProductsWithCategoriesToSortedProductsMediator(LiveData<List<ProductWithCategory>> unsortedProductsWithCategories) {
+        // Reset current sorted list ordering to the natural ordering
+        currentOrdering = naturalOrdering;
+
+        // Keep track of the new unsorted list source for the mediator so we can remove it later
+        this.unsortedProductsWithCategories = unsortedProductsWithCategories;
+
+        // Add the new unsorted list to the mediator and set up the sorting behaviour
+        sortedProductsWithCategories.addSource(this.unsortedProductsWithCategories, new Observer<List<ProductWithCategory>>() {
+            @Override
+            public void onChanged(List<ProductWithCategory> productWithCategories) {
+                // set sorted list as new mediator value
+                sortedProductsWithCategories.setValue(sortProducts(productWithCategories));
+            }
+        });
+    }
+
+    private void removeUnsortedProductsWithCategoriesFromSortedProductsMediator() {
+        sortedProductsWithCategories.removeSource(unsortedProductsWithCategories);
+    }
+
+    private List<ProductWithCategory> sortProducts(List<ProductWithCategory> productsWithCategories) {
+        switch(currentOrdering) {
+            case NAME_ASC:
+                //sort by name asc
+                Comparator<ProductWithCategory> byNameAsc =
+                        (ProductWithCategory product1, ProductWithCategory product2) -> product1.getProduct().getName().compareTo(product2.getProduct().getName());
+                productsWithCategories.sort(byNameAsc);
+                break;
+            case NAME_DESC:
+                Comparator<ProductWithCategory> byNameDesc =
+                        (ProductWithCategory product1, ProductWithCategory product2) -> product2.getProduct().getName().compareTo(product1.getProduct().getName());
+                productsWithCategories.sort(byNameDesc);
+                //sort by name desc
+                break;
+            case BARCODE_ASC:
+                //sort by barcode asc
+                Comparator<ProductWithCategory> byBarcodeAsc =
+                        (ProductWithCategory product1, ProductWithCategory product2) -> product1.getProduct().getBarcode().compareTo(product2.getProduct().getBarcode());
+                productsWithCategories.sort(byBarcodeAsc);
+                break;
+            case BARCODE_DESC:
+                //sort by barcode desc
+                Comparator<ProductWithCategory> byBarcodeDesc =
+                        (ProductWithCategory product1, ProductWithCategory product2) -> product2.getProduct().getBarcode().compareTo(product1.getProduct().getBarcode());
+                productsWithCategories.sort(byBarcodeDesc);
+                break;
+            case PRICE_ASC:
+                //sort by price asc
+                Comparator<ProductWithCategory> byPriceAsc =
+                        (ProductWithCategory product1, ProductWithCategory product2) -> product1.getProduct().getPrice().compareTo(product2.getProduct().getPrice());
+                productsWithCategories.sort(byPriceAsc);
+                break;
+            case PRICE_DESC:
+                //sort by price desc
+                Comparator<ProductWithCategory> byPriceDesc =
+                        (ProductWithCategory product1, ProductWithCategory product2) -> product2.getProduct().getPrice().compareTo(product1.getProduct().getPrice());
+                productsWithCategories.sort(byPriceDesc);
+                break;
+            default:
+                throw new IllegalArgumentException("Not a recognised enum.");
+        }
+        return productsWithCategories;
     }
 }

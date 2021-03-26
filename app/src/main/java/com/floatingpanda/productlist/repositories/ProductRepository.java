@@ -258,22 +258,22 @@ public class ProductRepository {
         switch (orderBy) {
             case NO_ORDER:
                 break;
-            case BARCODE:
+            case BARCODE_ASC:
                 queryString += " ORDER BY barcode";
                 break;
-            case BARCODE_INVERTED:
+            case BARCODE_DESC:
                 queryString += " ORDER BY barcode DESC";
                 break;
-            case PRICE:
+            case PRICE_ASC:
                 queryString += " ORDER BY price";
                 break;
-            case PRICE_INVERTED:
+            case PRICE_DESC:
                 queryString += " ORDER BY price DESC";
                 break;
-            case NAME_INVERTED:
+            case NAME_DESC:
                 queryString += " ORDER BY name DESC";
                 break;
-            case NAME:
+            case NAME_ASC:
                 queryString += " ORDER BY name";
                 break;
             default:

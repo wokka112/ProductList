@@ -40,4 +40,9 @@ public class Category {
 
         return category.getName().equals(this.getName());
     }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 }

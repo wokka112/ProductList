@@ -113,4 +113,9 @@ public class Product {
                 && product.getCategoryId() == this.getCategoryId()
                 && product.getNotes().equals(this.getNotes()));
     }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode() + getBarcode().hashCode();
+    }
 }

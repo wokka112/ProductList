@@ -451,7 +451,7 @@ public class ProductDaoTest {
         // A lower and higher price of 0 doesn't filter search results by price
         float lowerPrice = 0;
         float higherPrice = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         // Query to search with the partial name from start of the product name
         SimpleSQLiteQuery startQuery = createQuery(startPartialName, barcode, categoryId, lowerPrice, higherPrice);
@@ -494,7 +494,7 @@ public class ProductDaoTest {
         // A lower and higher price of 0 doesn't filter search results by price
         float lowerPrice = 0;
         float higherPrice = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(exactName, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -530,7 +530,7 @@ public class ProductDaoTest {
         // A lower and higher price of 0 doesn't filter search results by price
         float lowerPrice = 0;
         float higherPrice = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         // Query to search with the partial barcode from start of the product barcode
         SimpleSQLiteQuery startQuery = createQuery(name, startPartialBarcode, categoryId, lowerPrice, higherPrice);
@@ -570,7 +570,7 @@ public class ProductDaoTest {
         // A lower and higher price of 0 doesn't filter search results by price
         float lowerPrice = 0;
         float higherPrice = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -594,7 +594,7 @@ public class ProductDaoTest {
         // A lower and higher price of 0 doesn't filter search results by price
         float lowerPrice = 0;
         float higherPrice = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -639,7 +639,7 @@ public class ProductDaoTest {
         long categoryId = 0;
         // A higher price of 0 means the filter won't have an upper limit
         Price higherPrice = new Price(0, 0);
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -673,7 +673,7 @@ public class ProductDaoTest {
         long categoryId = 0;
         // A lower price of 0 means the filter won't have a lower limit
         Price lowerPrice = new Price(0, 0);
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -706,7 +706,7 @@ public class ProductDaoTest {
         String barcode = null;
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -742,7 +742,7 @@ public class ProductDaoTest {
         String barcode = null;
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -768,7 +768,7 @@ public class ProductDaoTest {
         String barcode = "";
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -794,7 +794,7 @@ public class ProductDaoTest {
         String barcode = "                              ";
         // A categoryId of 0 doesn't filter search results by category id
         long categoryId = 0;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         List<ProductWithCategory> productsWithCategory = LiveDataTestUtil.getValue(
@@ -845,7 +845,7 @@ public class ProductDaoTest {
         long categoryId = 0;
         float lowerPrice = 5.49f;
         float higherPrice = 20.27f;
-        OrderByEnum orderBy = OrderByEnum.NAME;
+        OrderByEnum orderBy = OrderByEnum.NAME_ASC;
 
         SimpleSQLiteQuery query = createQuery(name, barcode, categoryId, lowerPrice, higherPrice);
         Log.w("ProductDaoTest", "Query made: " + query.getSql());
