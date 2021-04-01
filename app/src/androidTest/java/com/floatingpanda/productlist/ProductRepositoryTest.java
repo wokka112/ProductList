@@ -14,6 +14,7 @@ import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
+import com.floatingpanda.productlist.other.OrderByEnum;
 import com.floatingpanda.productlist.repositories.ProductRepository;
 
 import org.junit.runner.RunWith;

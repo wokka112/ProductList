@@ -5,7 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
-import com.floatingpanda.productlist.OrderByEnum;
+import com.floatingpanda.productlist.other.OrderByEnum;
 import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Product;

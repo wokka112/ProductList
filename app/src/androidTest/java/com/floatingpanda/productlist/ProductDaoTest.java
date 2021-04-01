@@ -16,6 +16,7 @@ import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
+import com.floatingpanda.productlist.other.OrderByEnum;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

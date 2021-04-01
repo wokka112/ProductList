@@ -14,6 +14,7 @@ import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductDao;
 import com.floatingpanda.productlist.db.ProductWithCategory;
+import com.floatingpanda.productlist.other.OrderByEnum;
 import com.floatingpanda.productlist.ui.products.ProductViewModel;
 
 import org.junit.After;
@@ -23,8 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

@@ -1,29 +1,26 @@
 package com.floatingpanda.productlist.ui.products;
 
 import android.app.Application;
-import android.text.format.Time;
 import android.util.Log;
 
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
-import androidx.room.FtsOptions;
 
-import com.floatingpanda.productlist.OrderByEnum;
+import com.floatingpanda.productlist.other.OrderByEnum;
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Price;
 import com.floatingpanda.productlist.db.Product;
 import com.floatingpanda.productlist.db.ProductWithCategory;
 import com.floatingpanda.productlist.repositories.CategoryRepository;
 import com.floatingpanda.productlist.repositories.ProductRepository;
+import com.floatingpanda.productlist.ui.base.BaseViewModel;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class ProductViewModel extends AndroidViewModel {
+public class ProductViewModel extends BaseViewModel {
     private ProductRepository productRepository;
     private CategoryRepository categoryRepository;
 

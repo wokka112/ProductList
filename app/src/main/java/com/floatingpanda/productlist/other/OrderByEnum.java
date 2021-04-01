@@ -1,4 +1,4 @@
-package com.floatingpanda.productlist;
+package com.floatingpanda.productlist.other;
 
 public enum OrderByEnum {
     NO_ORDER,

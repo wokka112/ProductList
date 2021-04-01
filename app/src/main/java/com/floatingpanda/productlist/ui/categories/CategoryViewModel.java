@@ -8,10 +8,11 @@ import androidx.lifecycle.LiveData;
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Category;
 import com.floatingpanda.productlist.repositories.CategoryRepository;
+import com.floatingpanda.productlist.ui.base.BaseViewModel;
 
 import java.util.List;
 
-public class CategoryViewModel extends AndroidViewModel {
+public class CategoryViewModel extends BaseViewModel {
     private CategoryRepository categoryRepository;
     private LiveData<List<Category>> categories;
 

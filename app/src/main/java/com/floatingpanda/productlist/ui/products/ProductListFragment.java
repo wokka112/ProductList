@@ -8,19 +8,23 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.floatingpanda.productlist.R;
+import com.floatingpanda.productlist.ui.base.BaseFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class ProductListFragment extends Fragment {
-
+public class ProductListFragment extends BaseFragment {
     private ProductViewModel productViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_product_list, container, false);
+
+        productViewModel = new ViewModelProvider(requireActivity()).get(ProductViewModel.class);
+        super.setViewModel(productViewModel);
 
         FloatingActionButton addFab, searchFab;
 
@@ -56,17 +60,14 @@ public class ProductListFragment extends Fragment {
     }
 
     private void navigateToAddProduct() {
-        NavController navController = NavHostFragment.findNavController(this);
-        navController.navigate(ProductListFragmentDirections.actionNavProductListToNavProductAdd());
+        productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductAdd());
     }
 
     private void navigateToProductDetails() {
-        NavController navController = NavHostFragment.findNavController(this);
-        navController.navigate(ProductListFragmentDirections.actionNavProductListToNavProductDetails());
+        productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductDetails());
     }
 
     private void navigateToBarcodeSearch() {
-        NavController navController = NavHostFragment.findNavController(this);
-        navController.navigate(ProductListFragmentDirections.actionNavProductListToNavProductSearchBarcode());
+        productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductSearchBarcode());
     }
 }

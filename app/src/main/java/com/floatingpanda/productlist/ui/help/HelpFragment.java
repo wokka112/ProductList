@@ -10,8 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.floatingpanda.productlist.R;
+import com.floatingpanda.productlist.ui.base.BaseFragment;
 
-public class HelpFragment extends Fragment {
+public class HelpFragment extends BaseFragment {
 
     @Nullable
     @Override
