@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavDirections;
 
 import com.floatingpanda.productlist.navcommands.Back;
@@ -37,5 +38,12 @@ public class BaseViewModel extends AndroidViewModel {
 
     public void toRoot() {
         navigationCommands.postValue(ToRoot.getINSTANCE());
+    }
+
+    /**
+     * Removes observers from single live event so not multiple observers on it.
+     */
+    public void resetNavigationCommandsSingleLiveEvent() {
+        navigationCommands = new SingleLiveEvent<>();
     }
 }

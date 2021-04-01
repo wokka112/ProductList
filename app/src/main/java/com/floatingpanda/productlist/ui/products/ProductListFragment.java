@@ -1,5 +1,6 @@
 package com.floatingpanda.productlist.ui.products;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.floatingpanda.productlist.R;
+import com.floatingpanda.productlist.databinding.FragmentProductListBinding;
 import com.floatingpanda.productlist.ui.base.BaseFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -21,11 +24,16 @@ public class ProductListFragment extends BaseFragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_product_list, container, false);
+        FragmentProductListBinding binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_product_list, container, false);
+        View root = binding.getRoot();
 
         productViewModel = new ViewModelProvider(requireActivity()).get(ProductViewModel.class);
         super.setViewModel(productViewModel);
 
+        binding.setViewModel(productViewModel);
+
+        /*
         FloatingActionButton addFab, searchFab;
 
         addFab = root.findViewById(R.id.product_add_fab);
@@ -56,9 +64,12 @@ public class ProductListFragment extends BaseFragment {
             }
         });
 
+         */
+
         return root;
     }
 
+    /*
     private void navigateToAddProduct() {
         productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductAdd());
     }
@@ -70,4 +81,5 @@ public class ProductListFragment extends BaseFragment {
     private void navigateToBarcodeSearch() {
         productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductSearchBarcode());
     }
+     */
 }

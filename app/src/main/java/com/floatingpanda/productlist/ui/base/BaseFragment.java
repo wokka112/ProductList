@@ -27,6 +27,9 @@ public class BaseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (viewModel != null) {
+            // Remove observers from single live event in viewmodel before adding new observer
+            viewModel.resetNavigationCommandsSingleLiveEvent();
+
             Log.w("BaseFragment", "Viewmodel was not null");
             viewModel.getNavigationCommands().observe(getViewLifecycleOwner(), new Observer<NavigationCommand>() {
                 @Override
