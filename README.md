@@ -27,7 +27,7 @@ Currently no contributing is accepted. This is designed as a personal project. H
 
 ## Versioning
 
-[SemVer](http://semver.org/) is intended for versioning. 
+[SemVer](http://semver.org/) will be used once versioning has begun. 
 
 ## Authors
 
