@@ -37,6 +37,10 @@ Currently no contributing is accepted. This is designed as a personal project. H
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
+## Attribution
+
+All icons made by [FreePik](https://www.freepik.com) from www.flaticon.com.
+
 ## Acknowledgments
 
 * David Vávra's Medium article, [Using Navigation Architecture Component in a large banking app](https://medium.com/google-developer-experts/using-navigation-architecture-component-in-a-large-banking-app-ac84936a42c2) for inspiration when making Navigation work with an MVVM design pattern.
