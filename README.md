@@ -39,7 +39,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Attribution
 
-All icons made by [FreePik](https://www.freepik.com) from www.flaticon.com.
+Default member and group icons made by [FreePik](https://www.freepik.com) from www.flaticon.com.
 
 ## Acknowledgments
 
