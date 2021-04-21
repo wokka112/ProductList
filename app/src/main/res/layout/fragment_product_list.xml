@@ -43,7 +43,7 @@
             android:src="@drawable/ic_baseline_search_24"
             app:layout_constraintRight_toLeftOf="@id/product_add_fab"
             app:layout_constraintTop_toTopOf="@id/product_add_fab"
-            android:onClick="@{() -> viewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductAdd())"/>
+            android:onClick="@{() -> viewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductSearchBarcode())}"/>
 
         <!-- TODO remove once list added and move functionality into elements in list -->
         <Button
@@ -55,7 +55,7 @@
             android:text="Details"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:onClick="@{() -> viewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductDetails())"/>
+            android:onClick="@{() -> viewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductDetails())}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
