@@ -1,6 +1,7 @@
 package com.floatingpanda.productlist.ui.categories;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -33,6 +34,11 @@ public class CategoryViewModel extends BaseViewModel {
 
     public void addCategory(Category category) {
         categoryRepository.addCategory(category);
+    }
+
+    public void addCategoryAndGoBack() {
+        Log.w("CategoryViewModel.java", "Called add category and go back with null category.");
+        super.back();
     }
 
     public void editCategory(Category category) {
