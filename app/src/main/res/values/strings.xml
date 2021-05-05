@@ -13,6 +13,8 @@
     <string name="menu_help">Help</string>
 
     <string name="category_name_hint">Category Name</string>
+    <string name="category_name_exists_error">Category name already used. Please enter a different name.</string>
+    <string name="category_name_general_error">You must enter something for a category name.</string>
     <string name="category_save_button">Save</string>
     <string name="category_cancel_button">Cancel</string>
 

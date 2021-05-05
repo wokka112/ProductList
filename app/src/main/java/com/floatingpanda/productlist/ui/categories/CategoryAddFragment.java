@@ -15,10 +15,12 @@ import com.floatingpanda.productlist.R;
 import com.floatingpanda.productlist.databinding.FragmentCategoryAddEditBinding;
 import com.floatingpanda.productlist.databinding.FragmentCategoryListBinding;
 import com.floatingpanda.productlist.databinding.FragmentProductListBinding;
+import com.floatingpanda.productlist.forms.categoryforms.CategoryFormViewModel;
 import com.floatingpanda.productlist.ui.base.BaseFragment;
 
 public class CategoryAddFragment extends BaseFragment {
     private CategoryViewModel categoryViewModel;
+    private CategoryFormViewModel categoryFormViewModel;
 
     @Nullable
     @Override
@@ -30,7 +32,11 @@ public class CategoryAddFragment extends BaseFragment {
         categoryViewModel = new ViewModelProvider(requireActivity()).get(CategoryViewModel.class);
         super.setViewModel(categoryViewModel);
 
-        binding.setViewModel(categoryViewModel);
+        categoryFormViewModel = new ViewModelProvider((this)).get(CategoryFormViewModel.class);
+        categoryFormViewModel.init();
+
+        binding.setCategoryViewModel(categoryViewModel);
+        binding.setCategoryFormViewModel(categoryFormViewModel);
 
         return root;
     }
