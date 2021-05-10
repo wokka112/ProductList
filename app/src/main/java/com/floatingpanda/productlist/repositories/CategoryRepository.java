@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
+import com.floatingpanda.productlist.callbackinterfaces.CategoryFormCallback;
 import com.floatingpanda.productlist.db.AppDatabase;
 import com.floatingpanda.productlist.db.Category;
 import com.floatingpanda.productlist.db.CategoryDao;
@@ -60,6 +61,17 @@ public class CategoryRepository {
     public void deleteAllCategories() {
         AppDatabase.getExecutorService().execute(() -> {
             categoryDao.deleteAll();
+        });
+    }
+
+    //TODO write test
+    public void containsCategory(String name, CategoryFormCallback callback) {
+        AppDatabase.getExecutorService().execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean containsCategory = categoryDao.containsCategory(name);
+                callback.runNameValidityTest(containsCategory);
+            }
         });
     }
 }

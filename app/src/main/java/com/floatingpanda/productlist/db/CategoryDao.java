@@ -34,4 +34,8 @@ public interface CategoryDao {
 
     @Query("DELETE from categories")
     void deleteAll();
+
+    //TODO write test
+    @Query("SELECT EXISTS(SELECT * FROM categories WHERE name LIKE :categoryName)")
+    boolean containsCategory(String categoryName);
 }

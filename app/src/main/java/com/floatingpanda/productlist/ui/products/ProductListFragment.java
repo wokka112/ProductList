@@ -33,53 +33,6 @@ public class ProductListFragment extends BaseFragment {
 
         binding.setViewModel(productViewModel);
 
-        /*
-        FloatingActionButton addFab, searchFab;
-
-        addFab = root.findViewById(R.id.product_add_fab);
-        searchFab = root.findViewById(R.id.product_search_fab);
-
-        addFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToAddProduct();
-            }
-        });
-
-        searchFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToBarcodeSearch();
-            }
-        });
-
-        //TODO remove once implemented list
-        Button detailsButton;
-        detailsButton = root.findViewById(R.id.product_details_button);
-
-        detailsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToProductDetails();
-            }
-        });
-
-         */
-
         return root;
     }
-
-    /*
-    private void navigateToAddProduct() {
-        productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductAdd());
-    }
-
-    private void navigateToProductDetails() {
-        productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductDetails());
-    }
-
-    private void navigateToBarcodeSearch() {
-        productViewModel.navigate(ProductListFragmentDirections.actionNavProductListToNavProductSearchBarcode());
-    }
-     */
 }

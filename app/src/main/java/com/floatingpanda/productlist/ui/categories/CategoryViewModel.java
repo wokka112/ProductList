@@ -36,8 +36,8 @@ public class CategoryViewModel extends BaseViewModel {
         categoryRepository.addCategory(category);
     }
 
-    public void addCategoryAndGoBack() {
-        Log.w("CategoryViewModel.java", "Called add category and go back with null category.");
+    public void addCategoryAndGoBack(Category category) {
+        addCategory(category);
         super.back();
     }
 

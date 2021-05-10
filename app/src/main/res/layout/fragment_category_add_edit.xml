@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapWords"
-                android:text="@{categoryFormViewModel.categoryForm.fields.name}"
+                android:text="@={categoryFormViewModel.categoryForm.fields.name}"
                 app:onFocus="@{categoryFormViewModel.onFocusName}" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -50,7 +50,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/category_name_wrapper"
             android:enabled="@{categoryFormViewModel.categoryForm.valid}"
-            android:onClick="@{() -> categoryViewModel.addCategoryAndGoBack()}"/>
+            android:onClick="@{() -> categoryViewModel.addCategoryAndGoBack(categoryFormViewModel.category)}"/>
 
         <Button
             android:id="@+id/category_cancel_button"

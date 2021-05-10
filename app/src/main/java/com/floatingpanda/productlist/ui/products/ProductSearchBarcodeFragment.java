@@ -26,12 +26,4 @@ public class ProductSearchBarcodeFragment extends BaseFragment {
 
         return root;
     }
-
-    private void navigateToSearchResultsList() {
-
-    }
-
-    private void navigateToDetailSearch() {
-
-    }
 }

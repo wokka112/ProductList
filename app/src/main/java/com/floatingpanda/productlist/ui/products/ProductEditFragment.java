@@ -26,8 +26,4 @@ public class ProductEditFragment extends BaseFragment {
 
         return root;
     }
-
-    private void navigateBackToProductDetails() {
-
-    }
 }
